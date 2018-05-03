@@ -5,7 +5,7 @@ You may know that there are a lot of commercial or open source reference managem
 Still working on it.
 
 ## Main Functions
-Reference management 
+Reference management
 Get information from Journals/Conferences/Books/Transactions/etc
 Download papers
 Grouping/sorting
@@ -14,6 +14,7 @@ Etc.
 
 ## Change Log
 
+05/03/2018 Add a new contributor pp.
 02/27/2018 Add reference table sorting support  
 02/26/2018 Add online search page  
 02/13/2018 Add Data.db database support  
