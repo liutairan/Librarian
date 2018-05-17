@@ -99,6 +99,10 @@ class RefTable(QWidget):
         return rows
 
     def setRefsTable(self, refs):
+        self.mainTable.clearContents()
+        # Must disable sorting table first, otherwise error will occur
+        self.mainTable.setSortingEnabled(False)
+
         for rowInd in range(len(refs)):
             self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd][5]))) # Year
             self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd][1])) # Title
@@ -108,6 +112,10 @@ class RefTable(QWidget):
             self.mainTable.setItem(rowInd, 5, QTableWidgetItem(str(refs[rowInd][5]))) # Add Date, change to real field later
             self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd][6])) # Labels
             self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd][0]).zfill(10))) # RefAbsID
+
+        # Enable sorting again.
+        self.mainTable.setSortingEnabled(True)
+
 
     def updateRefsTable(self):
         refs = []
@@ -119,3 +127,18 @@ class RefTable(QWidget):
 
     def onUpdateRequest(self):
         self.updateRefsTable()
+
+    def updateRefsTableByKey(self, showingMethod, keyword):
+        if showingMethod == 0:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword,))
+            rows = cur.fetchall()
+            # print(rows)
+        elif showingMethod == 2:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword,))
+            rows = cur.fetchall()
+            # print(rows)
+        else:
+            pass
+        self.setRefsTable(rows)
