@@ -79,7 +79,7 @@ class GroupTrees(QWidget):
         searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["Sci-Hub"]) )
         searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["More..."]) )
 
-    def showingMethodChange(self,i):
+    def showingMethodChange(self, i):
         self.showingMethodInd = i
         #print(i, self.methodCB.currentText())
         groups = self.getGroupData()
@@ -108,27 +108,58 @@ class GroupTrees(QWidget):
         :param conn: the Connection object
         :return:
         """
+        retRows = []
         cur = conn.cursor()
         if self.showingMethodInd == 0:
             try:
                 cur.execute("SELECT * FROM PubIn")
+                rows = cur.fetchall()
+                retRows = rows
             except:
                 pass
         elif self.showingMethodInd == 1:
             try:
                 cur.execute("SELECT * FROM Labels")
+                rows = cur.fetchall()
+                retRows = rows
             except:
                 pass
         elif self.showingMethodInd == 2:
             try:
                 cur.execute("SELECT * FROM Years")
+                rows = cur.fetchall()
+                retRows = rows
+            except:
+                pass
+        elif self.showingMethodInd == 3:
+            """
+            PubIn + Years
+            """
+            try:
+                cur.execute("SELECT * FROM PubIn")
+                rows1 = cur.fetchall()
+                cur.execute("SELECT * FROM Years")
+                rows2 = cur.fetchall()
+                for pubTerm in rows1:
+                    retRows.append((pubTerm[0], pubTerm[1], rows2))
+            except:
+                pass
+        elif self.showingMethodInd == 4:
+            """
+            Year + PubIn
+            """
+            try:
+                cur.execute("SELECT * FROM Years")
+                rows1 = cur.fetchall()
+                cur.execute("SELECT * FROM PubIn")
+                rows2 = cur.fetchall()
+                for yearTerm in rows1:
+                    retRows.append((yearTerm[0], yearTerm[1], rows2))
             except:
                 pass
         else:
             pass
-
-        rows = cur.fetchall()
-        return rows
+        return retRows
 
     def setGroups(self, groups):
         self.localGroupTree.clear()
@@ -136,19 +167,12 @@ class GroupTrees(QWidget):
         for i in range(len(groups)):
             try:
                 roots.append( QTreeWidgetItem(self.localGroupTree, [groups[i][1]]) )
-                '''
-                c = []
-                temp_c0 = QTreeWidgetItem()
-                temp_c0.setText(0, "2018")
-                c.append(temp_c0)
-                temp_c1 = QTreeWidgetItem()
-                temp_c1.setText(0, "2017")
-                c.append(temp_c1)
-                temp_c2 = QTreeWidgetItem()
-                temp_c2.setText(0, "2016")
-                c.append(temp_c2)
-                roots[i].addChildren(c)
-                '''
+                children = []
+                for j in range(len(groups[i][2])):
+                    tempChild = QTreeWidgetItem()
+                    tempChild.setText(0, groups[i][2][j][1])
+                    children.append(tempChild)
+                roots[i].addChildren(children)
             except:
                 pass
 

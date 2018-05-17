@@ -160,6 +160,7 @@ class App(QMainWindow):
         self.reftable_widget.mainTable.currentItemChanged.connect(self.reftableItemChanged)
         self.groupTree_widget.localLibTree.itemClicked.connect(self.OpenLocalLibPage)
         self.groupTree_widget.localGroupTree.itemClicked.connect(self.onLocalGroupChanged)
+        self.groupTree_widget.methodCB.currentIndexChanged.connect(self.onShowingMethodChanged)
         self.groupTree_widget.searchMethodTree.itemClicked.connect(self.OpenOnlineSearchPage)
 
     def resizeEvent(self,event):
@@ -217,9 +218,6 @@ class App(QMainWindow):
                 self.infotab_widget.hide()
         except:
             print("Error")
-            print(self.reftable_widget.mainTable.item(currRow, 0).text())
-            print(self.reftable_widget.mainTable.item(currRow, 1).text())
-            print(self.reftable_widget.mainTable.item(currRow, 2).text())
 
     def reftableItemChanged(self, item1, item2):
         winGeo = self.geometry()
@@ -251,31 +249,66 @@ class App(QMainWindow):
         if getSelectedLocalLib:
             localLibNode = getSelectedLocalLib[0]
             localLibName = localLibNode.text(0)
-            #print(methodName)
             self.onlineSearch_widget.hide()
+            self.onlineSearch_widget.appearance = False
             self.groupTree_widget.searchMethodTree.clearSelection()
+            self.groupTree_widget.localGroupTree.clearSelection()
             self.reftable_widget.show()
             self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
             self.reftable_widget.appearance = True
+            # Update Local Library
+            if localLibName == "Search":
+                pass
+            else:
+                self.reftable_widget.updateRefsTableByLocalChoice(localLibName)
 
     def OpenOnlineSearchPage(self, item):
         getSelectedMethod = self.groupTree_widget.searchMethodTree.selectedItems()
         if getSelectedMethod:
             methodNode = getSelectedMethod[0]
             methodName = methodNode.text(0)
-            #print(methodName)
+            # Control the appearance of other pages
             self.reftable_widget.hide()
+            self.reftable_widget.appearance = False
             self.infotab_widget.hide()
-            self.groupTree_widget.localLibTree.clearSelection()
             self.onlineSearch_widget.show()
             self.onlineSearch_widget.appearance = True
+            # Clear selection of other groups
+            self.groupTree_widget.localLibTree.clearSelection()
+            self.groupTree_widget.localGroupTree.clearSelection()
             #self.onlineSearch_widget.setGeometry(self.width/5, self.toolbarheight, self.width*7/15, self.height)
 
     def onLocalGroupChanged(self, item):
+        if (self.onlineSearch_widget.appearance == True):
+            # Control the appearance of other pages
+            self.onlineSearch_widget.hide()
+            self.onlineSearch_widget.appearance = False
+            self.reftable_widget.show()
+            self.reftable_widget.appearance = True
+        # Clear selection of other groups
+        self.groupTree_widget.localLibTree.clearSelection()
+        self.groupTree_widget.searchMethodTree.clearSelection()
         getSelectedLocalGroups = self.groupTree_widget.localGroupTree.selectedItems()
         if getSelectedLocalGroups:
             localGroupNode = getSelectedLocalGroups[0]
             localGroupName = localGroupNode.text(0)
-            #print(localGroupName)
-            #print(self.groupTree_widget.showingMethodInd)
-            self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, localGroupName)
+            if getSelectedLocalGroups[0].parent() is not None:
+                primaryKey = getSelectedLocalGroups[0].parent().text(0)
+                secondaryKey = localGroupName
+                self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, [primaryKey, secondaryKey])
+            else:
+                primaryKey = localGroupName
+                self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, [primaryKey])
+
+    def onShowingMethodChanged(self, i):
+        if (self.onlineSearch_widget.appearance == True):
+            # Control the appearance of other pages
+            self.onlineSearch_widget.hide()
+            self.onlineSearch_widget.appearance = False
+            self.reftable_widget.show()
+            self.reftable_widget.appearance = True
+        # Clear selection of other groups
+        self.groupTree_widget.localLibTree.clearSelection()
+        self.groupTree_widget.searchMethodTree.clearSelection()
+        # Update Reference table
+        self.reftable_widget.updateRefsTable()
