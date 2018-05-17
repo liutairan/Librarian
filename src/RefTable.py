@@ -43,7 +43,7 @@ class RefTable(QWidget):
         self.mainTable.setColumnWidth(6, 240) # Labels
         self.mainTable.setColumnWidth(7, 120) # RefAbsID
         # Load refs from database
-        database = "Data.db"
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
         try:
             self.conn = self.createConnectionToDB(database)
@@ -179,7 +179,8 @@ class RefTable(QWidget):
         self.setRefsTable(rows)
 
     def updateRefsTableForTrash(self):
-        pass
+        rows = []
+        self.setRefsTable(rows)
 
     def updateRefsTableByLocalChoice(self, keyword):
         if keyword == "All References":

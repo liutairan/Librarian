@@ -57,7 +57,7 @@ class GroupTrees(QWidget):
         self.localGroupTree = QTreeWidget()
         self.localGroupTree.setHeaderLabels(["My Groups"])
         self.showingMethodInd = 0
-        database = "Data.db"
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         # create a database connection
         groups = []
         try:

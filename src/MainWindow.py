@@ -1,5 +1,3 @@
-#!/Users/liutairan/anaconda/envs/python3/bin/python3
-
 import sys
 import os
 import string
@@ -37,6 +35,7 @@ class App(QMainWindow):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.resized.connect(self.respResize)
         #self.setWindowIcon(QIcon('icon.png'))
+        self.bundle_dir = os.path.dirname(os.path.abspath(__file__))
         self.initWidgets()
         self.initSignalsSlots()
         self.setFocus()
@@ -91,21 +90,21 @@ class App(QMainWindow):
 
         # ToolBar
         self.tb = self.addToolBar("Tools")
-        btnsync = QAction(QIcon("Pics/Sync-Cloud-icon.png"),"Sync",self)
+        btnsync = QAction(QIcon(self.bundle_dir + "/Pics/Sync-Cloud-icon.png"),"Sync",self)
         self.tb.addAction(btnsync)
-        btnopen = QAction(QIcon("Pics/Folder-Open-icon.png"),"Open",self)
+        btnopen = QAction(QIcon(self.bundle_dir + "/Pics/Folder-Open-icon.png"),"Open",self)
         self.tb.addAction(btnopen)
-        btnsave = QAction(QIcon("Pics/User-Interface-Save-As-icon.png"),"Save",self)
+        btnsave = QAction(QIcon(self.bundle_dir + "/Pics/User-Interface-Save-As-icon.png"),"Save",self)
         self.tb.addAction(btnsave)
         self.tb.addSeparator()
-        btnRecom = QAction(QIcon("Pics/Bell-icon.png"),"Recommend",self)
+        btnRecom = QAction(QIcon(self.bundle_dir + "/Pics/Bell-icon.png"),"Recommend",self)
         self.tb.addAction(btnRecom)
-        btnTree = QAction(QIcon("Pics/Tree-icon.png"),"Create Tree",self)
+        btnTree = QAction(QIcon(self.bundle_dir + "/Pics/Tree-icon.png"),"Create Tree",self)
         self.tb.addAction(btnTree)
-        btnShare = QAction(QIcon("Pics/Folder-Share-icon.png"),"Share",self)
+        btnShare = QAction(QIcon(self.bundle_dir + "/Pics/Folder-Share-icon.png"),"Share",self)
         self.tb.addAction(btnShare)
         self.tb.addSeparator()
-        btnSettings = QAction(QIcon("Pics/Gear-icon.png"),"Settings",self)
+        btnSettings = QAction(QIcon(self.bundle_dir + "/Pics/Gear-icon.png"),"Settings",self)
         self.tb.addAction(btnSettings)
 
         spacer = QWidget()
@@ -124,9 +123,9 @@ class App(QMainWindow):
         #btnAdvance = QPushButton("Advance")
         self.tb.addWidget(lineEditSearch)
         #self.tb.addWidget(btnSearch)
-        btnSearch = QAction(QIcon("Pics/Magnifier-lr-icon.png"),"Search",self)
+        btnSearch = QAction(QIcon(self.bundle_dir + "/Pics/Magnifier-lr-icon.png"),"Search",self)
         self.tb.addAction(btnSearch)
-        btnAdvance = QAction(QIcon("Pics/Folder-Search-icon.png"),"Advance Search",self)
+        btnAdvance = QAction(QIcon(self.bundle_dir + "/Pics/Folder-Search-icon.png"),"Advance Search",self)
         self.tb.addAction(btnAdvance)
         lineEditSearch.setCompleter(completer)
 
@@ -258,7 +257,7 @@ class App(QMainWindow):
             self.reftable_widget.appearance = True
             # Update Local Library
             if localLibName == "Search":
-                pass
+                self.OpenLocalSearchPage()
             else:
                 self.reftable_widget.updateRefsTableByLocalChoice(localLibName)
 
@@ -277,6 +276,16 @@ class App(QMainWindow):
             self.groupTree_widget.localLibTree.clearSelection()
             self.groupTree_widget.localGroupTree.clearSelection()
             #self.onlineSearch_widget.setGeometry(self.width/5, self.toolbarheight, self.width*7/15, self.height)
+
+    def OpenLocalSearchPage(self):
+        self.reftable_widget.hide()
+        self.reftable_widget.appearance = False
+        self.infotab_widget.hide()
+        self.onlineSearch_widget.show()
+        self.onlineSearch_widget.appearance = True
+        # Clear selection of other groups
+        self.groupTree_widget.localGroupTree.clearSelection()
+        self.groupTree_widget.searchMethodTree.clearSelection()
 
     def onLocalGroupChanged(self, item):
         if (self.onlineSearch_widget.appearance == True):
