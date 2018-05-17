@@ -155,10 +155,11 @@ class App(QMainWindow):
         self.show()
 
     def initSignalsSlots(self):
-        self.groupTree_widget.updateRefsTableSignal.connect(self.reftable_widget.onUpdateRequest)
+        #self.groupTree_widget.updateRefsTableSignal.connect(self.reftable_widget.onUpdateRequest)
         self.reftable_widget.mainTable.clicked.connect(self.reftableClicked)
         self.reftable_widget.mainTable.currentItemChanged.connect(self.reftableItemChanged)
         self.groupTree_widget.localLibTree.itemClicked.connect(self.OpenLocalLibPage)
+        self.groupTree_widget.localGroupTree.itemClicked.connect(self.onLocalGroupChanged)
         self.groupTree_widget.searchMethodTree.itemClicked.connect(self.OpenOnlineSearchPage)
 
     def resizeEvent(self,event):
@@ -205,14 +206,20 @@ class App(QMainWindow):
     def reftableClicked(self):
         winGeo = self.geometry()
         currRow = self.reftable_widget.mainTable.currentRow()
-        if self.refTableRowEmpty(currRow) is False:  # Not empty, show
-            self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
-            refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
-            self.infotab_widget.updateInfo(refAbsoluteID)
-            self.infotab_widget.show()
-        elif self.refTableRowEmpty(currRow) is True: # Empty, hide
-            self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
-            self.infotab_widget.hide()
+        try:
+            if self.refTableRowEmpty(currRow) is False:  # Not empty, show
+                self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
+                refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
+                self.infotab_widget.updateInfo(refAbsoluteID)
+                self.infotab_widget.show()
+            elif self.refTableRowEmpty(currRow) is True: # Empty, hide
+                self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
+                self.infotab_widget.hide()
+        except:
+            print("Error")
+            print(self.reftable_widget.mainTable.item(currRow, 0).text())
+            print(self.reftable_widget.mainTable.item(currRow, 1).text())
+            print(self.reftable_widget.mainTable.item(currRow, 2).text())
 
     def reftableItemChanged(self, item1, item2):
         winGeo = self.geometry()
@@ -263,3 +270,12 @@ class App(QMainWindow):
             self.onlineSearch_widget.show()
             self.onlineSearch_widget.appearance = True
             #self.onlineSearch_widget.setGeometry(self.width/5, self.toolbarheight, self.width*7/15, self.height)
+
+    def onLocalGroupChanged(self, item):
+        getSelectedLocalGroups = self.groupTree_widget.localGroupTree.selectedItems()
+        if getSelectedLocalGroups:
+            localGroupNode = getSelectedLocalGroups[0]
+            localGroupName = localGroupNode.text(0)
+            #print(localGroupName)
+            #print(self.groupTree_widget.showingMethodInd)
+            self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, localGroupName)

@@ -86,16 +86,16 @@ class GroupTrees(QWidget):
         self.setGroups(groups)
 
         # Here is temp code for test, remove later.
-        tempRef = {"Title": ''.join(choice(string.ascii_letters) for x in range(10)),
-                   "Authors": ''.join(choice(string.ascii_letters) for x in range(5)),
-                   "Type": "Journal",
-                   "PubIn": "IEEE"+chr(randint(48,57)),
-                   "Year": "201"+chr(randint(48,57)),
-                   "Labels": ""}
-        with self.conn:
-            self.addSingleReference(self.conn, tempRef)
+        # tempRef = {"Title": ''.join(choice(string.ascii_letters) for x in range(10)),
+        #            "Authors": ''.join(choice(string.ascii_letters) for x in range(5)),
+        #            "Type": "Journal",
+        #            "PubIn": "IEEE"+chr(randint(48,57)),
+        #            "Year": "201"+chr(randint(48,57)),
+        #            "Labels": ""}
+        # with self.conn:
+        #     self.addSingleReference(self.conn, tempRef)
         # Update related database field and GUI widgets
-        self.updateRefsTableSignal.emit()
+        # self.updateRefsTableSignal.emit()
 
     def getGroupData(self):
         # Read group names from DataBase
