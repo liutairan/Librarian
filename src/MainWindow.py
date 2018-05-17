@@ -261,14 +261,6 @@ class App(QMainWindow):
                 pass
             else:
                 self.reftable_widget.updateRefsTableByLocalChoice(localLibName)
-            # if localLibName == "All References":
-            #     self.reftable_widget.updateRefsTable()
-            # elif localLibName == "Recently Added":
-            #     self.reftable_widget.updateRefsTableForRecent()
-            # elif localLibName == "Trash":
-            #     pass
-            # elif localLibName == "Search":
-            #     pass
 
     def OpenOnlineSearchPage(self, item):
         getSelectedMethod = self.groupTree_widget.searchMethodTree.selectedItems()
@@ -300,7 +292,13 @@ class App(QMainWindow):
         if getSelectedLocalGroups:
             localGroupNode = getSelectedLocalGroups[0]
             localGroupName = localGroupNode.text(0)
-            self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, localGroupName)
+            if getSelectedLocalGroups[0].parent() is not None:
+                primaryKey = getSelectedLocalGroups[0].parent().text(0)
+                secondaryKey = localGroupName
+                self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, [primaryKey, secondaryKey])
+            else:
+                primaryKey = localGroupName
+                self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, [primaryKey])
 
     def onShowingMethodChanged(self, i):
         if (self.onlineSearch_widget.appearance == True):

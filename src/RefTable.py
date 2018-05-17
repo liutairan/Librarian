@@ -131,19 +131,38 @@ class RefTable(QWidget):
     #    self.updateRefsTable()
 
     def updateRefsTableByKey(self, showingMethod, keyword):
+        rows = []
         if showingMethod == 0:
             cur = self.conn.cursor()
-            cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword,))
+            cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword[0],))
             rows = cur.fetchall()
         elif showingMethod == 1:
             cur = self.conn.cursor()
-            cur.execute("SELECT * FROM ReferencesData WHERE Labels=?", (keyword,))
+            cur.execute("SELECT * FROM ReferencesData WHERE Labels=?", (keyword[0],))
             rows = cur.fetchall()
         elif showingMethod == 2:
             cur = self.conn.cursor()
-            cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword,))
+            cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword[0],))
             rows = cur.fetchall()
             # print(rows)
+        elif showingMethod == 3:
+            if len(keyword) == 1:
+                cur = self.conn.cursor()
+                cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword[0],))
+                rows = cur.fetchall()
+            elif len(keyword) == 2:
+                cur = self.conn.cursor()
+                cur.execute("SELECT * FROM ReferencesData WHERE PubIn=? AND Year=?", (keyword[0], keyword[1]))
+                rows = cur.fetchall()
+        elif showingMethod == 4:
+            if len(keyword) == 1:
+                cur = self.conn.cursor()
+                cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword[0],))
+                rows = cur.fetchall()
+            elif len(keyword) == 2:
+                cur = self.conn.cursor()
+                cur.execute("SELECT * FROM ReferencesData WHERE Year=? AND PubIn=?", (keyword[0], keyword[1]))
+                rows = cur.fetchall()
         else:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM ReferencesData")
