@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QCompleter, QSizePolicy, QComboBox, QMessageBox, QDialog, QDialogButtonBox)
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt
+from PyQt5.QtCore import QDate, QDateTime
 import sqlite3
 from sqlite3 import Error
 
@@ -110,7 +111,7 @@ class RefTable(QWidget):
             self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd][4])) # PubIn
             self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd][2])) # Authors
             self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd][3])) # Type
-            self.mainTable.setItem(rowInd, 5, QTableWidgetItem(str(refs[rowInd][5]))) # Add Date, change to real field later
+            self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd][7])) # Add Date, change to real field later
             self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd][6])) # Labels
             self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd][0]).zfill(10))) # RefAbsID
 
@@ -148,3 +149,25 @@ class RefTable(QWidget):
             cur.execute("SELECT * FROM ReferencesData")
             rows = cur.fetchall()
         self.setRefsTable(rows)
+
+    def updateRefsTableForRecent(self):
+        now = QDateTime.currentDateTime()
+        previous = now.addMonths(-1)
+        previousTimeKey = previous.toString("yyyy-MM-dd hh:mm:ss.zzz")
+        cur = self.conn.cursor()
+        cur.execute("SELECT * FROM ReferencesData WHERE AddedTime>?", (previousTimeKey,))
+        rows = cur.fetchall()
+        self.setRefsTable(rows)
+
+    def updateRefsTableForTrash(self):
+        pass
+
+    def updateRefsTableByLocalChoice(self, keyword):
+        if keyword == "All References":
+            self.updateRefsTable()
+        elif keyword == "Recently Added":
+            self.updateRefsTableForRecent()
+        elif keyword == "Trash":
+            self.updateRefsTableForTrash()
+        elif keyword == "Search":
+            pass
