@@ -79,7 +79,7 @@ class GroupTrees(QWidget):
         searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["Sci-Hub"]) )
         searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["More..."]) )
 
-    def showingMethodChange(self,i):
+    def showingMethodChange(self, i):
         self.showingMethodInd = i
         #print(i, self.methodCB.currentText())
         groups = self.getGroupData()

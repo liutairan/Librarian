@@ -99,6 +99,7 @@ class RefTable(QWidget):
         return rows
 
     def setRefsTable(self, refs):
+        # Clean old contents
         self.mainTable.clearContents()
         # Must disable sorting table first, otherwise error will occur
         self.mainTable.setSortingEnabled(False)
@@ -125,20 +126,25 @@ class RefTable(QWidget):
             buttonReply = QMessageBox.critical(self, 'Alert', "Update Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
         self.setRefsTable(refs)
 
-    def onUpdateRequest(self):
-        self.updateRefsTable()
+    #def onUpdateRequest(self):
+    #    self.updateRefsTable()
 
     def updateRefsTableByKey(self, showingMethod, keyword):
         if showingMethod == 0:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword,))
             rows = cur.fetchall()
-            # print(rows)
+        elif showingMethod == 1:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM ReferencesData WHERE Labels=?", (keyword,))
+            rows = cur.fetchall()
         elif showingMethod == 2:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword,))
             rows = cur.fetchall()
             # print(rows)
         else:
-            pass
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM ReferencesData")
+            rows = cur.fetchall()
         self.setRefsTable(rows)
