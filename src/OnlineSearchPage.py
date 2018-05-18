@@ -22,6 +22,7 @@ class OnlineSearchPage(QWidget):
         super(QWidget, self).__init__(parent)
         self.initUI()
         self.initDBConnection()
+
     def initUI(self):
         layout = QVBoxLayout(self)
 
@@ -49,52 +50,25 @@ class OnlineSearchPage(QWidget):
 
         layout.addLayout(functionLayout)
 
-        mygroupbox = QGroupBox()
-        myform = QFormLayout()
-        myform.setVerticalSpacing(0)
-        myform.setHorizontalSpacing(2)
-        labelList = []
+        self.mygroupbox = QGroupBox()
+        self.myform = QFormLayout()
+        self.myform.setVerticalSpacing(0)
+        self.myform.setHorizontalSpacing(2)
+        self.labelList = []
         self.fieldComboList = []
         self.filterComboList = []
         self.inputboxList = []
         self.plusbuttonlist = []
         self.minusbuttonlist = []
         relationComboList = []
-        sublayoutList = []
+        self.sublayoutList = []
         for i in range(3):
-            labelList.append(QLabel('Key: '+ str(i+1)))
-            fieldCombo = QComboBox()
-            fieldChoiceList = ['Author', 'Year', 'Published In', 'Title', 'Keywords']
-            fieldCombo.addItems(fieldChoiceList)
-            fieldCombo.setCurrentIndex(i)
-            self.fieldComboList.append(fieldCombo)
-            filterCombo = QComboBox()
-            filterChoiceList = ['Contains', 'Is']
-            filterCombo.addItems(filterChoiceList)
-            self.filterComboList.append(filterCombo)
-            self.inputboxList.append(QLineEdit())
-
-            tempPlusButton = QPushButton()
-            tempPlusButton.setText("+")
-            tempPlusButton.setStyleSheet("QPushButton {background-color: gray; border-color: beige; border-width: 1px;" \
-                                    "border-radius: 1px; font: bold 14px; padding: 6px;}")
-            self.plusbuttonlist.append(tempPlusButton)
-            tempMinusButton = QPushButton()
-            tempMinusButton.setText("-")
-            tempMinusButton.setStyleSheet("QPushButton {background-color: gray; border-color: beige; border-width: 1px;" \
-                                    "border-radius: 1px; font: bold 14px; padding: 6px;}")
-            self.minusbuttonlist.append(tempMinusButton)
-            tempSubLayput = QHBoxLayout()
-            tempSubLayput.addWidget(self.fieldComboList[i])
-            tempSubLayput.addWidget(self.filterComboList[i])
-            tempSubLayput.addWidget(self.inputboxList[i])
-            tempSubLayput.addWidget(self.plusbuttonlist[i])
-            tempSubLayput.addWidget(self.minusbuttonlist[i])
-            sublayoutList.append(tempSubLayput)
-            myform.addRow(labelList[i], sublayoutList[i])
-        mygroupbox.setLayout(myform)
+            self.createSearchFilter(i)
+            # self.myform.addRow(self.sublayoutList[i])
+        #self.mygroupbox.setLayout(self.myform)
+        self.updateSearchFilterForm()
         scroll = QScrollArea()
-        scroll.setWidget(mygroupbox)
+        scroll.setWidget(self.mygroupbox)
         scroll.setWidgetResizable(True)
         scroll.setFixedHeight(140)
 
@@ -128,11 +102,57 @@ class OnlineSearchPage(QWidget):
         # Initialize internal signal and slot
         self.initSignalsSlots()
 
+    def createSearchFilter(self, ind):
+        self.labelList.insert(ind, QLabel('Key: '+ str(ind+1)))
+        fieldCombo = QComboBox()
+        fieldChoiceList = ['Author', 'Year', 'Published In', 'Title', 'Keywords']
+        fieldCombo.addItems(fieldChoiceList)
+        if ind < 3:
+            fieldCombo.setCurrentIndex(ind)
+        else:
+            fieldCombo.setCurrentIndex(0)
+        self.fieldComboList.insert(ind, fieldCombo)
+        filterCombo = QComboBox()
+        filterChoiceList = ['Contains', 'Is']
+        filterCombo.addItems(filterChoiceList)
+        self.filterComboList.insert(ind, filterCombo)
+        self.inputboxList.insert(ind, QLineEdit())
+
+        tempPlusButton = QPushButton()
+        tempPlusButton.setText("+")
+        tempPlusButton.setStyleSheet("QPushButton {background-color: gray; border-color: beige; border-width: 1px;" \
+                                "border-radius: 1px; font: bold 14px; padding: 6px;}")
+        self.plusbuttonlist.insert(ind, tempPlusButton)
+        tempMinusButton = QPushButton()
+        tempMinusButton.setText("-")
+        tempMinusButton.setStyleSheet("QPushButton {background-color: gray; border-color: beige; border-width: 1px;" \
+                                "border-radius: 1px; font: bold 14px; padding: 6px;}")
+        self.minusbuttonlist.insert(ind, tempMinusButton)
+        # Signal and Slot
+        self.plusbuttonlist[ind].clicked.connect(partial(self.onPlusButtonClicked ,ind))
+        self.minusbuttonlist[ind].clicked.connect(partial(self.onMinusButtonClicked ,ind))
+        tempSubLayput = QHBoxLayout()
+        tempSubLayput.addWidget(self.labelList[ind])
+        tempSubLayput.addWidget(self.fieldComboList[ind])
+        tempSubLayput.addWidget(self.filterComboList[ind])
+        tempSubLayput.addWidget(self.inputboxList[ind])
+        tempSubLayput.addWidget(self.plusbuttonlist[ind])
+        tempSubLayput.addWidget(self.minusbuttonlist[ind])
+        self.sublayoutList.insert(ind, tempSubLayput)
+        self.myform.insertRow(ind, self.sublayoutList[ind])
+
+    def removeSearchFilter(self, ind):
+        self.labelList.pop(ind)
+        self.fieldComboList.pop(ind)
+        self.filterComboList.pop(ind)
+        self.inputboxList.pop(ind)
+        self.plusbuttonlist.pop(ind)
+        self.minusbuttonlist.pop(ind)
+        self.sublayoutList.pop(ind)
+        self.myform.removeRow(ind)
+
     def initSignalsSlots(self):
         self.searchButton.clicked.connect(self.onSearchButtonClicked)
-        for i in range(len(self.plusbuttonlist)):
-            self.plusbuttonlist[i].clicked.connect(partial(self.onPlusButtonClicked ,i))
-            self.minusbuttonlist[i].clicked.connect(partial(self.onMinusButtonClicked ,i))
 
     def sortingTable(self, colIndex, order):
         #print("Column:" + str(colIndex))
@@ -178,9 +198,6 @@ class OnlineSearchPage(QWidget):
         return rows
 
     def updateInfo(self, refAbsID):
-        #textStringList = ["Title: ", "Authors: ", "Type: ", "Journal: ", "Year: ", "Volume: ", "Issue: ", "Pages: ", "Labels: ", "Added Date", "Reference ID: "]
-        #textString = "\n\n".join(textStringList)
-        #self.label1.setText(textString+str(refAbsID))
         refInfoList = self.readRefFromDBByID(self.conn, refAbsID)
         if len(refInfoList) >= 1:
             tempRef = refInfoList[0]
@@ -206,10 +223,24 @@ class OnlineSearchPage(QWidget):
             print(value)
 
     def onPlusButtonClicked(self, buttonId):
-        print(buttonId)
+        self.createSearchFilter(buttonId+1)
+        self.updateSearchFilterForm()
 
     def onMinusButtonClicked(self, buttonId):
-        print(buttonId)
+        if (buttonId == 0) and (len(self.sublayoutList) == 1):
+            buttonReply = QMessageBox.critical(self, 'Alert', "You need me.", QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            self.removeSearchFilter(buttonId)
+            self.updateSearchFilterForm()
+
+    def updateSearchFilterForm(self):
+        for i in range(len(self.sublayoutList)):
+            self.labelList[i].setText('Key: '+ str(i+1))
+            self.plusbuttonlist[i].clicked.disconnect()
+            self.minusbuttonlist[i].clicked.disconnect()
+            self.plusbuttonlist[i].clicked.connect(partial(self.onPlusButtonClicked, i))
+            self.minusbuttonlist[i].clicked.connect(partial(self.onMinusButtonClicked, i))
+        self.mygroupbox.setLayout(self.myform)
 
     def onSearchButtonClicked(self):
         for i in range(len(self.inputboxList)):
