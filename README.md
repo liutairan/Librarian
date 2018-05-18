@@ -5,9 +5,11 @@ You may know that there are a lot of commercial or open source reference managem
 Still working on it.
 
 ## Main Functions
-    Reference management 
+    Reference management
     Get information from Journals/Conferences/Books/Transactions/etc
     Download papers
     Grouping/sorting
     Creating reference network
     Etc.
+
+## Preview
