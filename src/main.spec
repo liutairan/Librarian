@@ -9,7 +9,7 @@ added_files = [
               ]
 
 a = Analysis(['main.py'],
-             pathex=['/Users/username/Dropbox/Code/Librarian'],
+             pathex=['/Users/username/Librarian'],
              binaries=[],
              datas=added_files,
              hiddenimports=[],
