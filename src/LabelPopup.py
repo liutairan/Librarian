@@ -31,12 +31,21 @@ class AddLabelPopup(QDialog):
 
         self.entryLineEdit = QLineEdit(self)
         self.entryLineEdit.setGeometry(360,10,150,20)
-        self.entryLineEdit.setPlaceholderText("Hi I'm default.")
+        self.entryLineEdit.setPlaceholderText("Type a label here.")
 
         self.entryHintList = QListWidget(self)
         self.entryHintList.setStyleSheet("max-width: 200px; max-height: 350; font-size: 15pt")
         self.entryHintList.setGeometry(360,33,150,60)  # left, top, width, height
-        listItems = ["General", "Account", "Sorting", "Paths", "Proxy"]
+
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
+        refs = []
+        try:
+            self.conn = self.createConnectionToDB(database)
+            labels = self.getLabelsData()
+        except:
+            buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
+
+        listItems = labels
         self.entryHintList.addItems(listItems)
         self.entryHintList.itemDoubleClicked.connect(self.setEntryText)
 
@@ -83,3 +92,28 @@ class AddLabelPopup(QDialog):
     def getValue(self):
         # return label value to InfoTabs
         return self.labelTextList
+
+    def createConnectionToDB(self, db_file):
+        """ create a database connection to the SQLite database
+            specified by the db_file
+        :param db_file: database file
+        :return: Connection object or None
+        """
+        try:
+            conn = sqlite3.connect(db_file)
+            return conn
+        except Error as e:
+            print(e)
+
+        return None
+
+    def getLabelsData(self):
+        labelRows = self.readLabelsFromDB(self.conn)
+        labels = list(map(lambda x: x[1], labelRows))
+        return labels
+
+    def readLabelsFromDB(self, conn):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM Labels")
+        rows = cur.fetchall()
+        return rows

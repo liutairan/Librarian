@@ -15,7 +15,7 @@ from sqlite3 import Error
 from LabelPopup import AddLabelPopup
 
 class InfoTabs(QWidget):
-
+    updateRefsTableSignal = pyqtSignal()
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         self.initUI()
@@ -48,9 +48,9 @@ class InfoTabs(QWidget):
         self.addLabelButton.clicked.connect(self.addLabel)
         self.editInfoButton = QPushButton("Edit")
 
-        self.label1 = QLabel("A Lot of Infomation Here.")
-        self.label1.setStyleSheet("background-color: light grey; border: 2px inset grey; min-height: 100px; qproperty-alignment: AlignLeft AlignTop")
-        self.tab1.layout.addWidget(self.label1)
+        self.infoLabel = QLabel("A Lot of Infomation Here.")
+        self.infoLabel.setStyleSheet("background-color: light grey; border: 2px inset grey; min-height: 100px; qproperty-alignment: AlignLeft AlignTop")
+        self.tab1.layout.addWidget(self.infoLabel)
         self.tab1.buttonLayout = QHBoxLayout()
         self.tab1.buttonLayout.addWidget(self.openFileButton)
         self.tab1.buttonLayout.addWidget(self.downloadFileButton)
@@ -64,6 +64,8 @@ class InfoTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
         self.appearance = True
+
+        self.refAbsID = None
 
     def initDBConnection(self):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
@@ -95,11 +97,20 @@ class InfoTabs(QWidget):
         """
         cur = conn.cursor()
         cur.execute("SELECT * FROM ReferencesData WHERE id=?", (id,))
-
         rows = cur.fetchall()
         return rows
 
+    def updateRefLabelsToDBByID(self, conn, id, value):
+        sql = ''' UPDATE ReferencesData
+                  SET Labels = ?
+                  WHERE id = ?'''
+        task = (value, id)
+        cur = conn.cursor()
+        cur.execute(sql, task)
+        conn.commit()
+
     def updateInfo(self, refAbsID):
+        self.refAbsID = refAbsID
         #textStringList = ["Title: ", "Authors: ", "Type: ", "Journal: ", "Year: ", "Volume: ", "Issue: ", "Pages: ", "Labels: ", "Added Date", "Reference ID: "]
         #textString = "\n\n".join(textStringList)
         #self.label1.setText(textString+str(refAbsID))
@@ -114,15 +125,17 @@ class InfoTabs(QWidget):
                               "Volume: "       + " ",
                               "Issue: "        + " ",
                               "Pages: "        + " ",
-                              "Labels: "       + " ",
-                              "Added Date:"    + " ",
+                              "Labels: "       + tempRef[6],
+                              "Added Time:"    + tempRef[7],
                               "Reference ID: " + str(tempRef[0]).zfill(10)]
             textString = "\n\n".join(textStringList)
-            self.label1.setText(textString)
+            self.infoLabel.setText(textString)
 
     def addLabel(self):
         addLabelDialog = AddLabelPopup()
         result = addLabelDialog.exec_()
         if result:
             value = addLabelDialog.getValue()
-            print(value)
+            self.updateRefLabelsToDBByID(self.conn, self.refAbsID, ",".join(value))
+            self.updateInfo(self.refAbsID)
+            self.updateRefsTableSignal.emit()

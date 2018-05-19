@@ -161,6 +161,7 @@ class App(QMainWindow):
         self.groupTree_widget.localGroupTree.itemClicked.connect(self.onLocalGroupChanged)
         self.groupTree_widget.methodCB.currentIndexChanged.connect(self.onShowingMethodChanged)
         self.groupTree_widget.searchMethodTree.itemClicked.connect(self.OpenOnlineSearchPage)
+        self.infotab_widget.updateRefsTableSignal.connect(self.reftable_widget.updateSingleRefByID)
 
     def resizeEvent(self,event):
         self.resized.emit()

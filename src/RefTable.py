@@ -99,6 +99,12 @@ class RefTable(QWidget):
         rows = cur.fetchall()
         return rows
 
+    def readRefFromDBByID(self, conn, id):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM ReferencesData WHERE ID=?", (id, ))
+        rows = cur.fetchall()
+        return rows
+
     def setRefsTable(self, refs):
         # Clean old contents
         self.mainTable.clearContents()
@@ -118,6 +124,17 @@ class RefTable(QWidget):
         # Enable sorting again.
         self.mainTable.setSortingEnabled(True)
 
+    def setSingleRef(self, ref, rowInd):
+        self.mainTable.setSortingEnabled(False)
+        self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref[5]))) # Year
+        self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref[1])) # Title
+        self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref[4])) # PubIn
+        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref[2])) # Authors
+        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref[3])) # Type
+        self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref[7])) # Add Date, change to real field later
+        self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref[6])) # Labels
+        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref[0]).zfill(10))) # RefAbsID
+        self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
         refs = []
@@ -191,3 +208,9 @@ class RefTable(QWidget):
             self.updateRefsTableForTrash()
         elif keyword == "Search":
             pass
+
+    def updateSingleRefByID(self):
+        currRow = self.mainTable.currentRow()
+        refAbsoluteID = int(self.mainTable.item(currRow, 7).text())
+        refRow = self.readRefFromDBByID(self.conn, refAbsoluteID)
+        self.setSingleRef(refRow[0], currRow)
