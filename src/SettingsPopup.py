@@ -40,11 +40,6 @@ class SettingsPopup(QWidget):
 
     def paintEvent(self, e):
         pass
-        '''
-        dc = QPainter(self)
-        dc.drawLine(0, 0, 100, 100)
-        dc.drawLine(100, 0, 0, 100)
-        '''
 
     def closeEvent(self, event):
         print("Closed from dialog")
