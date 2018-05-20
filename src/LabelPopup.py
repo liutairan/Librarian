@@ -12,12 +12,14 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Q
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseIO import *
+
 class AddLabelPopup(QDialog):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.setWindowTitle("Add Labels")
         self.initUI()
-        self.retrunVal = None
+        self.returnVal = None
 
     def initUI(self):
         self.left = 100
@@ -40,8 +42,8 @@ class AddLabelPopup(QDialog):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
         try:
-            self.conn = self.createConnectionToDB(database)
-            labels = self.getLabelsData()
+            self.conn = createConnectionToDB(database)
+            labels = getLabelsFromDB(self.conn)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 

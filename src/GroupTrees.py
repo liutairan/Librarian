@@ -12,6 +12,8 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Q
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseIO import *
+
 class GroupTrees(QWidget):
     updateRefsTableSignal = pyqtSignal()
     def __init__(self, parent):

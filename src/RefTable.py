@@ -13,6 +13,8 @@ from PyQt5.QtCore import QDate, QDateTime
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseIO import *
+
 class RefTable(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -46,7 +48,7 @@ class RefTable(QWidget):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
         try:
-            self.conn = self.createConnectionToDB(database)
+            self.conn = createConnectionToDB(database)
             refs = self.getRefsData()
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
@@ -75,35 +77,9 @@ class RefTable(QWidget):
             pass
             #print("Descending")
 
-    def createConnectionToDB(self, db_file):
-        """ create a database connection to the SQLite database
-            specified by the db_file
-        :param db_file: database file
-        :return: Connection object or None
-        """
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(e)
-
-        return None
-
     def getRefsData(self):
-        refRows = self.readRefsFromDB(self.conn)
+        refRows = readAllRefsFromDB(self.conn)
         return refRows
-
-    def readRefsFromDB(self, conn):
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM ReferencesData")
-        rows = cur.fetchall()
-        return rows
-
-    def readRefFromDBByID(self, conn, id):
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM ReferencesData WHERE ID=?", (id, ))
-        rows = cur.fetchall()
-        return rows
 
     def setRefsTable(self, refs):
         # Clean old contents
@@ -143,9 +119,6 @@ class RefTable(QWidget):
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Update Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
         self.setRefsTable(refs)
-
-    #def onUpdateRequest(self):
-    #    self.updateRefsTable()
 
     def updateRefsTableByKey(self, showingMethod, keyword):
         rows = []
@@ -212,5 +185,5 @@ class RefTable(QWidget):
     def updateSingleRefByID(self):
         currRow = self.mainTable.currentRow()
         refAbsoluteID = int(self.mainTable.item(currRow, 7).text())
-        refRow = self.readRefFromDBByID(self.conn, refAbsoluteID)
+        refRow = readRefFromDBByID(self.conn, refAbsoluteID)
         self.setSingleRef(refRow[0], currRow)

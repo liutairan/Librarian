@@ -14,6 +14,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Q
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseIO import *
 from LabelPopup import AddLabelPopup
 
 class OnlineSearchPage(QWidget):
@@ -167,38 +168,12 @@ class OnlineSearchPage(QWidget):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
         try:
-            self.conn = self.createConnectionToDB(database)
+            self.conn = createConnectionToDB(database)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
-    def createConnectionToDB(self, db_file):
-        """ create a database connection to the SQLite database
-            specified by the db_file
-        :param db_file: database file
-        :return: Connection object or None
-        """
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(e)
-        return None
-
-    def readRefFromDBByID(self, conn, id):
-        """
-        Query tasks by priority
-        :param conn: the Connection object
-        :param priority:
-        :return:
-        """
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM ReferencesData WHERE id=?", (id,))
-
-        rows = cur.fetchall()
-        return rows
-
     def updateInfo(self, refAbsID):
-        refInfoList = self.readRefFromDBByID(self.conn, refAbsID)
+        refInfoList = readRefFromDBByID(self.conn, refAbsID)
         if len(refInfoList) >= 1:
             tempRef = refInfoList[0]
             textStringList = ["Title: "        + tempRef[1],
