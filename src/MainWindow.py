@@ -13,6 +13,7 @@ import sqlite3
 from sqlite3 import Error
 
 from InfoTabs import InfoTabs
+from AboutPopup import AboutPopup
 from SettingsPopup import SettingsPopup
 from RefTable import RefTable
 from GroupTrees import GroupTrees
@@ -47,25 +48,21 @@ class App(QMainWindow):
         bar.setNativeMenuBar(False)
         self.setStyleSheet("QMenuBar {background-color: #EDEDED;}")
         bar.setStyleSheet("QMenuBar::item {background-color: #EDEDED;}")
-        fileMenu = bar.addMenu(" &File")
-        fileMenu.addAction("New")
+
+        fileMenu = bar.addMenu("File") # " &File"?
+        newMenu = QAction("New",self)
+        newMenu.setShortcut("Ctrl+N")
+        fileMenu.addAction(newMenu)
 
         save = QAction("Save",self)
         save.setShortcut("Ctrl+S")
         fileMenu.addAction(save)
-
         fileMenu.addAction("Import")
         fileMenu.addAction("Export")
-
-        '''
-        edit = file.addMenu("Edit")
-        edit.addAction("copy")
-        edit.addAction("paste")
-        '''
-
+        fileMenu.addSeparator()
         quit = QAction("Quit",self)
         fileMenu.addAction(quit)
-        fileMenu.triggered[QAction].connect(self.processtrigger)
+        fileMenu.triggered[QAction].connect(self.menubarTrigger)
 
         editMenu = bar.addMenu("Edit")
         editMenu.addAction("copy")
@@ -87,6 +84,14 @@ class App(QMainWindow):
         historyMenu.addAction("Online Search History")
         windowMenu = bar.addMenu("Window")
         helpMenu = bar.addMenu("Help")
+        helpMenu.addAction("Help")
+        helpMenu.addAction("Check for Updates...")
+        helpMenu.addSeparator()
+        aboutMenu = QAction("About",self)
+        aboutMenu.setShortcut("Alt+F1")
+        helpMenu.addAction(aboutMenu)
+        helpMenu.triggered[QAction].connect(self.menubarTrigger)
+        #helpMenu.addAction("About")
 
         # ToolBar
         self.tb = self.addToolBar("Tools")
@@ -188,11 +193,15 @@ class App(QMainWindow):
         print("pressed tool button is " + action.text())
         if action.text() == "Settings":
             self.setting = SettingsPopup()
-            #self.setting.setGeometry(100, 100, 480, 360)
             self.setting.show()
 
-    def processtrigger(self, q):
-        print(q.text()+" is triggered")
+    def menubarTrigger(self, q):
+        action = q.text()
+        if action == "About":
+            self.about = AboutPopup()
+            self.about.show()
+        else:
+            print(q.text()+" is triggered")
 
     def dododo(self):
         print('Here dododo')
