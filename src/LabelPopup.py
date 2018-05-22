@@ -27,6 +27,7 @@ class AddLabelPopup(QDialog):
         self.width = 520
         self.height = 300
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.centerWindow()
 
         self.labelTextList = []
         self.existLabel = []
@@ -63,6 +64,13 @@ class AddLabelPopup(QDialog):
         self.buttons.move(350,260)
 
         #self.updateLabels()
+
+    def centerWindow(self):
+        frameGeo = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGeo.moveCenter(centerPoint)
+        self.move(frameGeo.topLeft())
 
     def setEntryText(self, item):
         self.entryLineEdit.setText(item.text())

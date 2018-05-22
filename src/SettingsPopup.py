@@ -24,6 +24,7 @@ class SettingsPopup(QWidget):
         self.width = 480
         self.height = 360
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.centerWindow()
         #self.layout = QHBoxLayout()
         #self.layout.setSpacing(0)
         #self.layout.setContentsMargins(0,0,0,0)
@@ -37,6 +38,13 @@ class SettingsPopup(QWidget):
         itemHeight = 50
         for i in range(len(listItems)):
             self.settingTopicList.item(i).setSizeHint(QSize(itemWidth, itemHeight))
+
+    def centerWindow(self):
+        frameGeo = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGeo.moveCenter(centerPoint)
+        self.move(frameGeo.topLeft())
 
     def paintEvent(self, e):
         pass

@@ -15,6 +15,7 @@ from sqlite3 import Error
 from InfoTabs import InfoTabs
 from AboutPopup import AboutPopup
 from SettingsPopup import SettingsPopup
+from InteractiveGraphBrowser import InteractiveGraphBrowser
 from RefTable import RefTable
 from GroupTrees import GroupTrees
 from OnlineSearchPage import OnlineSearchPage
@@ -34,6 +35,7 @@ class App(QMainWindow):
         self.toolbarheight = 65
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.centerWindow()
         self.resized.connect(self.respResize)
         #self.setWindowIcon(QIcon('icon.png'))
         self.bundle_dir = os.path.dirname(os.path.abspath(__file__))
@@ -41,6 +43,13 @@ class App(QMainWindow):
         self.initSignalsSlots()
         self.setFocus()
         #print(self.focusWidget())
+
+    def centerWindow(self):
+        frameGeo = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGeo.moveCenter(centerPoint)
+        self.move(frameGeo.topLeft())
 
     def initWidgets(self):
         # Menu Bar
@@ -194,6 +203,9 @@ class App(QMainWindow):
         if action.text() == "Settings":
             self.setting = SettingsPopup()
             self.setting.show()
+        elif action.text() == "Create Tree":
+            self.relationGraph = InteractiveGraphBrowser()
+            self.relationGraph.show()
 
     def menubarTrigger(self, q):
         action = q.text()

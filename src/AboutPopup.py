@@ -24,6 +24,7 @@ class AboutPopup(QWidget):
         self.width = 480
         self.height = 360
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.centerWindow()
         self.layout = QHBoxLayout()
         self.labelLayout = QVBoxLayout()
 
@@ -50,6 +51,13 @@ class AboutPopup(QWidget):
         self.layout.addWidget(self.iconLabel)
         self.layout.addLayout(self.labelLayout)
         self.setLayout(self.layout)
+
+    def centerWindow(self):
+        frameGeo = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGeo.moveCenter(centerPoint)
+        self.move(frameGeo.topLeft())
 
     def paintEvent(self, e):
         pass
