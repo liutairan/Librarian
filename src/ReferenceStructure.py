@@ -1,12 +1,15 @@
 class Article:
-    def __init__(self, author="", title="", journal="", volume="", number="", year="", abstract=""):
-        self.data = {"author":author,
-                     "title":title,
-                     "journal":journal,
-                     "volume":volume,
-                     "number":number,
-                     "year":year,
-                     "abstract":abstract}
+    def __init__(self, author="", title="", journal="", volume="", number="", year="", pages="", month="", note="", abstract=""):
+        self.data = {"author"    :author,
+                     "title"     :title,
+                     "journal"   :journal,
+                     "volume"    :volume,
+                     "number"    :number,
+                     "year"      :year,
+                     "pages"     :pages,
+                     "month"     :month,
+                     "note"      :note,
+                     "abstract"  :abstract}
 
 class Book:
     def __init__(self):
