@@ -1,6 +1,7 @@
 import sys
 import os
 import string
+import math
 from random import *
 from itertools import chain
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
@@ -15,6 +16,8 @@ from PyQt5 import QtCore, QtGui
 import pyqtgraph as pg
 import numpy as np
 #import sip
+
+from DatabaseIO import *
 
 class Graph(pg.GraphItem):
     refChosenSignal = pyqtSignal(str)
@@ -147,28 +150,14 @@ class InteractiveGraphBrowser(QDialog):
         '''
         input: edge array
         '''
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
+        refs = []
+        try:
+            self.conn = createConnectionToDB(database)
+        except:
+            buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
         ## Define the edge set of connections in the graph
-        adj = np.array([
-        [0,1],
-        [0,2],
-        [0,3],
-        [0,4],
-        [1,5],
-        [1,6],
-        [1,7],
-        [2,8],
-        [2,9],
-        [2,10],
-        [2,11],
-        [2,12],
-        [3,13],
-        [3,14],
-        [3,15],
-        [3,16],
-        [4,17],
-        [4,18],
-        [4,19],
-        ])
+        adj = self.initEdges()
         E = adj.shape[0]
         pos, N = self.initPos( adj )
         ## Define the symbol to use for each node (this is optional) 'o','o','o','o','t','+'
@@ -204,8 +193,29 @@ class InteractiveGraphBrowser(QDialog):
         depthList = self.findDepth(nodeList, adjList)
         widthList = self.findWidth(depthList)
         for node in nodeList:
-            pos[node] = np.array([widthList[node]*40/depthList.count(depthList[node]), -depthList[node]*8])
+            pos[node] = np.array([(widthList[node]-math.floor(depthList.count(depthList[node])/2.0))*40/depthList.count(depthList[node]), -depthList[node]*8])
         return pos, N
+
+    def initEdges(self):
+        adj = np.empty(shape=(0,0))
+        tempNodeList = ["0"]
+        while len(tempNodeList):
+            for node in tempNodeList:
+                # Need work here:
+                #    need to index the data from 0 to N continuously
+                #    otherwise error will occur
+                citations = getCitationsFromDB(self.conn, node)
+                tempNodeList.remove(node)
+                if citations == None:
+                    pass
+                else:
+                    for tempNode in citations:
+                        if adj.size:
+                            adj = np.append(adj, [[int(node),int(tempNode)]],axis=0)
+                        else:
+                            adj = np.array([[int(node),int(tempNode)]])
+                    tempNodeList = tempNodeList + citations
+        return adj
 
     def filterConnections(self, node, restAdj):
         '''
@@ -214,7 +224,8 @@ class InteractiveGraphBrowser(QDialog):
         '''
         edgeList = list(filter(lambda x: node in x, restAdj))
         tempNodeList = list(set(list(chain.from_iterable(edgeList) )))
-        tempNodeList.remove(node)
+        if len(tempNodeList):
+            tempNodeList.remove(node)
         return tempNodeList, edgeList
 
     def findDepth(self, tempNodeList, adjList):
