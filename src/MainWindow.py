@@ -12,6 +12,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Q
 import sqlite3
 from sqlite3 import Error
 
+from ReferenceStructure import *
 from InfoTabs import InfoTabs
 from AboutPopup import AboutPopup
 from SettingsPopup import SettingsPopup
@@ -206,6 +207,7 @@ class App(QMainWindow):
         elif action.text() == "Create Tree":
             self.relationGraph = InteractiveGraphBrowser()
             self.relationGraph.show()
+
 
     def menubarTrigger(self, q):
         action = q.text()

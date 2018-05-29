@@ -92,5 +92,23 @@ def readLabelsFromDB(dbConnection):
     rows = cur.fetchall()
     return rows
 
+def getCitationsFromDB(dbConnection, refAbsID):
+    citationRows = readCitationsFromDB(dbConnection, refAbsID)
+    citationListStr = None
+    if len(citationRows):
+        citations = citationRows[0][2]
+        if len(citations):
+            try:
+                citationListStr = citations.split(",")
+            except:
+                pass
+    return citationListStr
+
+def readCitationsFromDB(dbConnection, refAbsID):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM Citation WHERE Self=?", (refAbsID,))
+    rows = cur.fetchall()
+    return rows
+
 if __name__ == "__main__":
     pass
