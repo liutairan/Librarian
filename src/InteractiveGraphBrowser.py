@@ -144,10 +144,9 @@ class InteractiveGraphBrowser(QDialog):
         self.g.refChosenSignal.connect(self.refChosen)
 
     def initData(self):
-        ## Define positions of nodes
-        #N = 20
-        #pos = np.random.random((N,2))*20
-
+        '''
+        input: edge array
+        '''
         ## Define the edge set of connections in the graph
         adj = np.array([
         [0,1],
