@@ -18,7 +18,7 @@ Please correct me if I am not right.
 | Name | Advantage | Disadvantage | Note |
 | ---- | :-------: | :----------: | ---- |
 | EndNote  | Convenient local grouping and searching | Data limited to Web of Science database; conferences are not included | No free version; research or education institutions may provide license |
-| Mendeley | Drop document to add reference;  abundant reference information; export format (BibTeX, RIS, EndNote); recommendation based on search history | Cannot download papers; recommendation update slow; synchronization is slow; may crash on MacOS | Free |
+| Mendeley | Drop document to add reference;  abundant reference information; export format (BibTeX, RIS, EndNote); recommendation based on search history | Recommendation update slow; synchronization is slow; may crash on MacOS | Free |
 | ReadCube | Abundant online resources | No effective grouping and local searching; inconvenient synchronization with the free version | Free version and Pro version |
 
 ## Preview  
