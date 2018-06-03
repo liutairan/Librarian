@@ -113,6 +113,7 @@ def readLabelsFromDB(dbConnection):
     rows = cur.fetchall()
     return rows
 
+# Checked
 def getCitationsFromDB(dbConnection, refAbsID):
     citationRows = readCitationsFromDB(dbConnection, refAbsID)
     citationListStr = None
@@ -125,6 +126,7 @@ def getCitationsFromDB(dbConnection, refAbsID):
                 pass
     return citationListStr
 
+# Checked
 def readCitationsFromDB(dbConnection, refAbsID):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM Citation WHERE Self=?", (refAbsID,))
