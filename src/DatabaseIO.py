@@ -18,6 +18,27 @@ def createConnectionToDB(db_file):
         print(e)
         return None
 
+# Checked
+def createTempCitationTable(dbConnection):
+    """
+    Create a table in the database
+    """
+    sql = ''' CREATE TABLE TempCitation
+              (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, Self TEXT, Cited TEXT, CitedBy TEXT)'''
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    dbConnection.commit()
+
+# Checked
+def deleteTempCitationTable(dbConnection):
+    """
+    Delete temp citation table from the database
+    """
+    sql = ''' DROP TABLE TempCitation'''
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    dbConnection.commit()
+
 def writeRefToDB(dbConnection, refDict):
     sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels)
               VALUES(?,?,?,?,?,?) '''
