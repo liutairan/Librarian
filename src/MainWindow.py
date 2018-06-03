@@ -16,6 +16,7 @@ from ReferenceStructure import *
 from InfoTabs import InfoTabs
 from AboutPopup import AboutPopup
 from SettingsPopup import SettingsPopup
+from RelationGraphGenerator import RelationGraphGenerator
 from InteractiveGraphBrowser import InteractiveGraphBrowser
 from RefTable import RefTable
 from GroupTrees import GroupTrees
@@ -205,7 +206,7 @@ class App(QMainWindow):
             self.setting = SettingsPopup()
             self.setting.show()
         elif action.text() == "Create Tree":
-            self.relationGraph = InteractiveGraphBrowser()
+            self.relationGraph = RelationGraphGenerator()
             self.relationGraph.show()
 
 
