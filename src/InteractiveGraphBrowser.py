@@ -101,7 +101,7 @@ class Graph(pg.GraphItem):
 
 class InteractiveGraphBrowser(QDialog):
     resized = pyqtSignal()
-    def __init__(self):
+    def __init__(self, keywordlist):
         super().__init__()
         self.initUI()
         self.initData()
