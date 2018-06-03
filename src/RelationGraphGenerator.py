@@ -55,9 +55,34 @@ class RelationGraphGenerator(QDialog):
         #print("Closed from RelationGraphGenerator")
 
     def createGraph(self):
-        createTempCitationTable(self.conn)
+        try:
+            deleteTempCitationTable(self.conn)
+        except:
+            pass
+        try:
+            createTempCitationTable(self.conn)
+        except:
+            pass
+        self.copyTempCitationData()
         self.relationGraph = InteractiveGraphBrowser()
         self.relationGraph.show()
+
+    def copyTempCitationData(self):
+        headNodeList = ["0"]
+        for headnode in headNodeList:
+            tempNodeList = [headnode]
+            copyCitationData(self.conn, headnode)
+            while len(tempNodeList):
+                for node in tempNodeList:
+                    citations = getCitationsFromDB(self.conn, node)
+                    tempNodeList.remove(node)
+                    if citations == None:
+                        pass
+                    else:
+                        for tempNode in citations:
+                            tempCite = readCitationsFromDB(self.conn, tempNode)
+                            copyCitationData(self.conn, tempNode)
+                        tempNodeList = tempNodeList + citations
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
