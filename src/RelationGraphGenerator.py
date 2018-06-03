@@ -24,16 +24,10 @@ class RelationGraphGenerator(QDialog):
         self.returnVal = None
 
     def initUI(self):
-        # self.left = 100
-        # self.top = 100
-        # self.width = 520
-        # self.height = 300
-        # self.setGeometry(self.left, self.top, self.width, self.height)
         self.centerWindow()
         self.lineEdit = QLineEdit()
         self.lineEdit.setStyleSheet("min-width: 100")
         self.createGraphButton = QPushButton("Create Graph", self)
-        #self.createGraphButton.move(380,95)
         layout = QVBoxLayout()
         layout.addWidget(self.lineEdit)
         layout.addWidget(self.createGraphButton)
