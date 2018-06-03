@@ -24,15 +24,14 @@ class RelationGraphGenerator(QDialog):
         self.returnVal = None
 
     def initUI(self):
-        self.left = 100
-        self.top = 100
-        self.width = 520
-        self.height = 300
-        self.setGeometry(self.left, self.top, self.width, self.height)
         self.centerWindow()
-
+        self.lineEdit = QLineEdit()
+        self.lineEdit.setStyleSheet("min-width: 100")
         self.createGraphButton = QPushButton("Create Graph", self)
-        self.createGraphButton.move(380,95)
+        layout = QVBoxLayout()
+        layout.addWidget(self.lineEdit)
+        layout.addWidget(self.createGraphButton)
+        self.setLayout(layout)
         self.createGraphButton.clicked.connect(self.createGraph)
 
     def centerWindow(self):
@@ -52,23 +51,30 @@ class RelationGraphGenerator(QDialog):
 
     def closeEvent(self, event):
         deleteTempCitationTable(self.conn)
-        #print("Closed from RelationGraphGenerator")
 
     def createGraph(self):
-        try:
-            deleteTempCitationTable(self.conn)
-        except:
+        key = self.lineEdit.text()
+        if len(key) > 0:
+            keylist = key.split(",")
+            if len(keylist) > 0:
+                try:
+                    deleteTempCitationTable(self.conn)
+                except:
+                    pass
+                try:
+                    createTempCitationTable(self.conn)
+                except:
+                    pass
+                self.copyTempCitationData(keylist)
+                self.relationGraph = InteractiveGraphBrowser(keylist)
+                self.relationGraph.show()
+            else:
+                pass
+        else:
             pass
-        try:
-            createTempCitationTable(self.conn)
-        except:
-            pass
-        self.copyTempCitationData()
-        self.relationGraph = InteractiveGraphBrowser()
-        self.relationGraph.show()
 
-    def copyTempCitationData(self):
-        headNodeList = ["0"]
+    def copyTempCitationData(self, keylist):
+        headNodeList = keylist
         for headnode in headNodeList:
             tempNodeList = [headnode]
             copyCitationData(self.conn, headnode)

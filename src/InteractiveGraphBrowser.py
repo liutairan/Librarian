@@ -101,7 +101,7 @@ class Graph(pg.GraphItem):
 
 class InteractiveGraphBrowser(QDialog):
     resized = pyqtSignal()
-    def __init__(self):
+    def __init__(self, keywordlist):
         super().__init__()
         self.initUI()
         self.initData()
@@ -256,6 +256,14 @@ class InteractiveGraphBrowser(QDialog):
                     restAdjList.remove(edge)
             else:
                 # This node hasn't been given depth, move it to the end of the list
+                restFlagList = []
+                for i in range(len(restList)):
+                    restFlagList.append(depthFlag[tempNodeList.index(restList[i])])
+                if True in restFlagList:
+                    pass
+                else:
+                    # No True in the restFlagList, dead loop
+                    depthFlag[tempNodeList.index(restList[0])] = True
                 restList.remove(node)
                 restList.append(node)
         return depthList
