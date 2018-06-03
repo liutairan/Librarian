@@ -133,5 +133,21 @@ def readCitationsFromDB(dbConnection, refAbsID):
     rows = cur.fetchall()
     return rows
 
+def copyCitationData(dbConnection, refAbsID):
+    citationRows = readCitationsFromDB(dbConnection, refAbsID)
+    if len(citationRows) > 0:
+        cur = dbConnection.cursor()
+        cur.execute("SELECT * FROM TempCitation WHERE Self=?", (refAbsID,))
+        rows = cur.fetchall()
+        if len(rows) == 0:
+            sql = ''' INSERT INTO TempCitation(Self, Cited, CitedBy)
+                      VALUES(?,?,?) '''
+            task = (citationRows[0][1], citationRows[0][2], citationRows[0][3])
+            cur = dbConnection.cursor()
+            cur.execute(sql, task)
+            dbConnection.commit()
+        else:
+            pass
+
 if __name__ == "__main__":
     pass
