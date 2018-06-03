@@ -157,9 +157,9 @@ class InteractiveGraphBrowser(QDialog):
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
         ## Define the edge set of connections in the graph
-        adj = self.initEdges()
+        adj, nodeList = self.initNodesEdges()
         E = adj.shape[0]
-        pos, N = self.initPos( adj )
+        pos, N = self.initPos( adj, nodeList )
         ## Define the symbol to use for each node (this is optional) 'o','o','o','o','t','+'
         symbols = ['o']*N
 
@@ -173,49 +173,52 @@ class InteractiveGraphBrowser(QDialog):
                        ('width',float)])
 
         ## Define text to show next to each symbol
-        texts = ["%d" % (i+1) for i in range(N)]
-
+        texts = nodeList
+        #texts = ["%d" % (i+1) for i in range(N)]
         ## Update the graph
         self.g.setData(pos=pos, adj=adj, pen=lines, size=2, symbol=symbols,
                   symbolPen=pg.mkPen((107,91,149,180)),
                   brush=pg.mkBrush((107,91,149,255)),
                   pxMode=False, text=texts)
 
-    def initPos(self, adj):
+    def initPos(self, adj, localNodeList):
         '''
         input: adj, numpy array E*2
         output: pos, numpy array N*2
         '''
         adjList = adj.tolist()
-        nodeList = list(set(adj.reshape(1, adj.shape[0]*adj.shape[1]).tolist()[0]))
-        N =len(nodeList)
+        N =len(localNodeList)
         pos = np.zeros((N,2))
-        depthList = self.findDepth(nodeList, adjList)
+        depthList = self.findDepth(localNodeList, adjList)
         widthList = self.findWidth(depthList)
-        for node in nodeList:
-            pos[node] = np.array([(widthList[node]-math.floor(depthList.count(depthList[node])/2.0))*40/depthList.count(depthList[node]), -depthList[node]*8])
+        for node in localNodeList:
+            ind = localNodeList.index(node)
+            pos[ind] = np.array([(widthList[ind]-math.floor(depthList.count(depthList[ind])/2.0))*40/depthList.count(depthList[ind]), -depthList[ind]*8])
         return pos, N
 
-    def initEdges(self):
-        adj = np.empty(shape=(0,0))
-        tempNodeList = ["0"]
-        while len(tempNodeList):
-            for node in tempNodeList:
-                # Need work here:
-                #    need to index the data from 0 to N continuously
-                #    otherwise error will occur
-                citations = getCitationsFromDB(self.conn, node)
-                tempNodeList.remove(node)
-                if citations == None:
-                    pass
-                else:
-                    for tempNode in citations:
-                        if adj.size:
-                            adj = np.append(adj, [[int(node),int(tempNode)]],axis=0)
+    def initNodesEdges(self):
+        adjNode = np.empty(shape=(0,0))
+        adjIndex = np.empty(shape=(0,0))
+        nodeList = []
+        citationRows = getTempCitationsFromDB(self.conn)
+        if len(citationRows) > 0:
+            for citation in citationRows:
+                nodeList.append(citation[1])
+                tempNodeList = citation[2].split(",")
+                nodeList = nodeList + tempNodeList
+                if len(tempNodeList) > 0:
+                    for tempNode in tempNodeList:
+                        if adjNode.size:
+                            adjNode = np.append(adjNode, [[citation[1], tempNode]], axis=0)
                         else:
-                            adj = np.array([[int(node),int(tempNode)]])
-                    tempNodeList = tempNodeList + citations
-        return adj
+                            adjNode = np.array([[citation[1], tempNode]])
+        nodeList = list(set(nodeList))
+        for i in range(adjNode.shape[0]):
+            if adjIndex.size:
+                adjIndex = np.append(adjIndex, [[nodeList.index(adjNode[i][0]),nodeList.index(adjNode[i][1])]], axis=0)
+            else:
+                adjIndex = np.array([[nodeList.index(adjNode[i][0]),nodeList.index(adjNode[i][1])]])
+        return adjIndex, nodeList
 
     def filterConnections(self, node, restAdj):
         '''
@@ -230,17 +233,31 @@ class InteractiveGraphBrowser(QDialog):
 
     def findDepth(self, tempNodeList, adjList):
         N = len(tempNodeList)
-        depthList = [-1]*N
+        depthList = [0]*N
+        depthFlag = [False]*N
         restList = list(tempNodeList)
-        depthList[0] = 0
-        while len(restList)*len(adjList):
+        restAdjList = list(adjList)
+        depthFlag[0] = True
+        while len(restList)*len(restAdjList):
             node = restList[0]
-            conNodeList,edgeList = self.filterConnections(node, adjList)
-            for con in conNodeList:
-                depthList[con] = depthList[node]+1
-            restList.remove(node)
-            for edge in edgeList:
-                adjList.remove(edge)
+            ind = tempNodeList.index(node)
+            if depthFlag[ind] == True:
+                # if this node has been given depth
+                conNodeList,edgeList = self.filterConnections(ind, restAdjList)
+                for con in conNodeList:
+                    ind2 = con
+                    if [ind, ind2] in edgeList:
+                        depthList[ind2] = depthList[ind]+1
+                    elif [ind2, ind] in edgeList:
+                        depthList[ind2] = depthList[ind]-1
+                    depthFlag[ind2] = True
+                restList.remove(node)
+                for edge in edgeList:
+                    restAdjList.remove(edge)
+            else:
+                # This node hasn't been given depth, move it to the end of the list
+                restList.remove(node)
+                restList.append(node)
         return depthList
 
     def findWidth(self, tempDepthList):
@@ -255,7 +272,27 @@ class InteractiveGraphBrowser(QDialog):
         if refMsg == "-1":
             self.refDetailLabel.setText("\tClick on a node to show detail information")
         else:
-            self.refDetailLabel.setText("\tRef: " + refMsg)
+            cited,ref = self.refDetail(refMsg)
+            if len(ref) == 1:
+                labelText = "\t" + \
+                            "RefID: " + refMsg + "\n\t" + \
+                            "Title: " + ref[0][1] + "\n\t" + \
+                            "Authors: " + ref[0][2] + "\n\t" + \
+                            "Cited: " + cited + "\n"
+            elif len(ref) == 0:
+                labelText = "\t" + \
+                            "RefID: " + refMsg + "\n\t" + \
+                            "Cited" + cited + "\n"
+
+            self.refDetailLabel.setText(labelText)
+
+    def refDetail(self, refAbsID):
+        cited = getCitationsFromDB(self.conn, refAbsID)
+        ref = readRefFromDBByID(self.conn, refAbsID)
+        citedStr = ""
+        if cited:
+            citedStr = ",".join(cited)
+        return citedStr, ref
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

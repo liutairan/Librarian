@@ -74,9 +74,6 @@ class RelationGraphGenerator(QDialog):
             copyCitationData(self.conn, headnode)
             while len(tempNodeList):
                 for node in tempNodeList:
-                    # Need work here:
-                    #    need to index the data from 0 to N continuously
-                    #    otherwise error will occur
                     citations = getCitationsFromDB(self.conn, node)
                     tempNodeList.remove(node)
                     if citations == None:

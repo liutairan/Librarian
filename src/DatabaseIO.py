@@ -133,6 +133,7 @@ def readCitationsFromDB(dbConnection, refAbsID):
     rows = cur.fetchall()
     return rows
 
+# Checked
 def copyCitationData(dbConnection, refAbsID):
     citationRows = readCitationsFromDB(dbConnection, refAbsID)
     if len(citationRows) > 0:
@@ -148,6 +149,19 @@ def copyCitationData(dbConnection, refAbsID):
             dbConnection.commit()
         else:
             pass
+
+# Checked
+def getTempCitationsFromDB(dbConnection):
+    citationRows = readTempCitationsFromDB(dbConnection)
+    return citationRows
+
+# Checked
+def readTempCitationsFromDB(dbConnection):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM TempCitation")
+    rows = cur.fetchall()
+    return rows
+
 
 if __name__ == "__main__":
     pass
