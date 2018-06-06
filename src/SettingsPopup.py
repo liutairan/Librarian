@@ -4,13 +4,30 @@ import string
 from random import *
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
-    QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout,
+    QTabWidget, QTableWidget, QTableWidgetItem, QFormLayout, QVBoxLayout, QHBoxLayout,
     QHeaderView, QLabel, QTreeWidget, QTreeWidgetItem, QToolBar, QLineEdit,
     QCompleter, QSizePolicy, QComboBox, QMessageBox, QDialog, QDialogButtonBox)
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt
 import sqlite3
 from sqlite3 import Error
+
+class General(QWidget):
+    def __init__(self, parent=None):
+        super(QWidget, self).__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        pathLabel = QLabel("Path")
+        self.lineEdit = QLineEdit(self)
+        layout = QFormLayout()
+        layout.addRow(pathLabel, self.lineEdit)
+        self.setLayout(layout)
+
+class Account(QWidget):
+    def __init__(self, parent=None):
+        super(QWidget, self).__init__(parent)
+        #self.initUI()
 
 class SettingsPopup(QWidget):
     def __init__(self, parent=None):
@@ -38,6 +55,9 @@ class SettingsPopup(QWidget):
         itemHeight = 50
         for i in range(len(listItems)):
             self.settingTopicList.item(i).setSizeHint(QSize(itemWidth, itemHeight))
+        self.settingTopicList.itemClicked.connect(self.subpageChosen)
+        self.initSubpages()
+        self.loadSubpage(listItems[0])
 
     def centerWindow(self):
         frameGeo = self.frameGeometry()
@@ -51,3 +71,30 @@ class SettingsPopup(QWidget):
 
     def closeEvent(self, event):
         print("Closed from dialog")
+
+    def initSubpages(self):
+        self.generalPage = General(self)
+        self.generalPage.setGeometry(self.width*5.5/15, self.height/15, self.width*4/15, self.height*13/15)
+        self.accountPage = Account(self)
+        self.accountPage.setGeometry(self.width*5.5/15, self.height/15, self.width*4/15, self.height*13/15)
+
+    def hideSubpages(self):
+        self.generalPage.hide()
+        self.accountPage.hide()
+
+    def subpageChosen(self, item):
+        self.hideSubpages()
+        self.loadSubpage(item.text())
+
+    def loadSubpage(self, pageName):
+        if pageName == "General":
+            self.loadGeneral()
+
+    def loadGeneral(self):
+        self.generalPage.show()
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    screen = SettingsPopup()
+    screen.show()
+    sys.exit(app.exec_())
