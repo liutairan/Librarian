@@ -200,9 +200,14 @@ class Watch(QWidget):
         mainlayout.addRow(vspacer)
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
+
     def update(self, value):
-        #print(value)
-        print(value.data())
+        fullpath = ""
+        currentIndex = value
+        while currentIndex.isValid():
+            fullpath = os.path.join(currentIndex.data(), fullpath)
+            currentIndex = currentIndex.parent()
+        print(fullpath)
 
 class Proxy(QWidget):
     def __init__(self, parent=None):
