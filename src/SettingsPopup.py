@@ -5,11 +5,12 @@ from random import *
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
     QTabWidget, QTableWidget, QTableWidgetItem, QFormLayout, QVBoxLayout,
-    QHBoxLayout, QHeaderView, QLabel, QTreeWidget, QTreeWidgetItem,
+    QHBoxLayout, QHeaderView, QLabel, QTreeView, QTreeWidget, QTreeWidgetItem,
     QToolBar, QLineEdit, QCheckBox, QCompleter, QSpacerItem, QSizePolicy,
-    QComboBox, QMessageBox, QDialog, QDialogButtonBox)
+    QComboBox, QMessageBox, QDialog, QDialogButtonBox, QFileSystemModel,
+    QDirModel)
 from PyQt5.QtGui import QIcon, QPainter
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt, QModelIndex
 import sqlite3
 from sqlite3 import Error
 
@@ -130,6 +131,37 @@ class Organizer(QWidget):
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
 
+class CheckableDirModel(QDirModel):
+    updateCheckBoxSignal = pyqtSignal([QModelIndex])
+    def __init__(self, parent=None):
+        QDirModel.__init__(self, None)
+        self.checks = {}
+
+    def data(self, index, role=Qt.DisplayRole):
+        if role != Qt.CheckStateRole:
+            return QDirModel.data(self, index, role)
+        else:
+            if index.column() == 0:
+                return self.checkState(index)
+
+    def flags(self, index):
+        return QDirModel.flags(self, index) | Qt.ItemIsUserCheckable
+
+    def checkState(self, index):
+        if index in self.checks:
+            return self.checks[index]
+        else:
+            return Qt.Unchecked
+
+    def setData(self, index, value, role):
+        if (role == Qt.CheckStateRole and index.column() == 0):
+            self.checks[index] = value
+            #print(index, value)
+            self.updateCheckBoxSignal.emit(index)
+            return True
+
+        return QDirModel.setData(self, index, value, role)
+
 class Watch(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
@@ -137,6 +169,20 @@ class Watch(QWidget):
 
     def initUI(self):
         mainlayout = QFormLayout()
+        self.model = CheckableDirModel()
+        #self.model = QFileSystemModel()
+
+        self.tree = QTreeView()
+        self.tree.setModel(self.model)
+
+        self.tree.setAnimated(False)
+        self.tree.setIndentation(20)
+        self.tree.setColumnHidden(1, True)
+        self.tree.setColumnHidden(2, True)
+        self.tree.setColumnHidden(3, True)
+        self.tree.setSortingEnabled(True)
+        self.model.updateCheckBoxSignal.connect(self.update)
+
         buttonLayout = QHBoxLayout()
         self.applyButton = QPushButton("Apply", self)
         self.resetButton = QPushButton("Reset", self)
@@ -146,18 +192,21 @@ class Watch(QWidget):
         buttonLayout.addWidget(self.applyButton)
         buttonLayout.addWidget(self.resetButton)
 
-
         vspacer = QWidget()
         vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # Add to layout
-        # mainlayout.addRow(proxytypeLabel, self.proxytypeComboBox)
-        # mainlayout.addRow(serverLabel, self.serverLineEdit)
-        # mainlayout.addRow(portLabel, self.portLineEdit)
-        # mainlayout.addRow(usernameLabel, self.usernameLineEdit)
-        # mainlayout.addRow(passwordLabel, self.passwordLineEdit)
+        mainlayout.addRow(self.tree)
         mainlayout.addRow(vspacer)
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
+
+    def update(self, value):
+        fullpath = ""
+        currentIndex = value
+        while currentIndex.isValid():
+            fullpath = os.path.join(currentIndex.data(), fullpath)
+            currentIndex = currentIndex.parent()
+        print(fullpath)
 
 class Proxy(QWidget):
     def __init__(self, parent=None):
