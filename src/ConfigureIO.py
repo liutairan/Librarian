@@ -25,16 +25,22 @@ def writeSettingItems(itemDict):
         newSettings[tempDict] = itemDict[tempDict]
     writeSettingFile(newSettings)
 
+def readSettingItems(itemList):
+    settings = readSettingFile()
+    retDict = {}
+    for item in itemList:
+        retDict[item] = settings[item]
+    return retDict
 
 if __name__ == "__main__":
     # Sample
     cfgData = {'General': {'Recent': 3},
                'Account': {'Username': '',
                            'Password': ''},
-               'Organizer': {'Organize': 'True',
+               'Organizer': {'Organize': True,
                              'Copy': '/.../',
-                             'Sort': 'True',
-                             'Rename': 'True'},
+                             'Sort': True,
+                             'Rename': True},
                'Watched': ['/Test1/', '/Test2/', '/Test3'],
                'Proxy': {'Type': '',
                          'Server': '',
