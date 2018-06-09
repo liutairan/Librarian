@@ -40,6 +40,7 @@ class General(QWidget):
         self.applyButton = QPushButton("Apply", self)
         self.resetButton = QPushButton("Reset", self)
         self.applyButton.clicked.connect(self.apply)
+        self.applyButton.setEnabled(False)
 
         buttonLayout.addWidget(hspacer)
         buttonLayout.addWidget(self.applyButton)
@@ -55,16 +56,19 @@ class General(QWidget):
         self.setLayout(mainlayout)
 
     def initVariables(self):
-        settings = readSettingFile()
+        settings = readSettingItems(['General'])
         self.recent = settings['General']['Recent']
         self.recentComboBox.setCurrentIndex(self.recent)
 
     def apply(self):
         data = {'General': {'Recent': self.recent}}
         writeSettingItems(data)
+        self.applyButton.setEnabled(False)
 
     def recentChanged(self, item):
-        self.recent = item
+        if self.recent != item:
+            self.recent = item
+            self.applyButton.setEnabled(True)
 
 class Account(QWidget):
     def __init__(self, parent=None):
