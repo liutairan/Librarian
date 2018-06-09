@@ -192,7 +192,6 @@ class Watch(QWidget):
         buttonLayout.addWidget(self.applyButton)
         buttonLayout.addWidget(self.resetButton)
 
-
         vspacer = QWidget()
         vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # Add to layout
