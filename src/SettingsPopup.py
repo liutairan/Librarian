@@ -14,10 +14,13 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Q
 import sqlite3
 from sqlite3 import Error
 
+from ConfigureIO import *
+
 class General(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.initUI()
+        self.initVariables()
 
     def initUI(self):
         mainlayout = QVBoxLayout()
@@ -30,11 +33,13 @@ class General(QWidget):
         self.recentComboBox = QComboBox(self)
         periodItemList = ["1 day", "3 days", "1 week", "1 month", "3 months", "6 months", "1 year"]
         self.recentComboBox.addItems(periodItemList)
+        self.recentComboBox.currentIndexChanged.connect(self.recentChanged)
         formlayout.addRow(recentLabel, self.recentComboBox)
 
         buttonLayout = QHBoxLayout()
         self.applyButton = QPushButton("Apply", self)
         self.resetButton = QPushButton("Reset", self)
+        self.applyButton.clicked.connect(self.apply)
 
         buttonLayout.addWidget(hspacer)
         buttonLayout.addWidget(self.applyButton)
@@ -48,6 +53,18 @@ class General(QWidget):
         mainlayout.addWidget(vspacer)
         mainlayout.addLayout(buttonLayout)
         self.setLayout(mainlayout)
+
+    def initVariables(self):
+        settings = readSettingFile()
+        self.recent = settings['General']['Recent']
+        self.recentComboBox.setCurrentIndex(self.recent)
+
+    def apply(self):
+        data = {'General': {'Recent': self.recent}}
+        writeSettingItems(data)
+
+    def recentChanged(self, item):
+        self.recent = item
 
 class Account(QWidget):
     def __init__(self, parent=None):
@@ -290,6 +307,7 @@ class SettingsPopup(QWidget):
         pass
 
     def closeEvent(self, event):
+        # Also write unsaved settings to config file (?), to do.
         print("Closed from dialog")
 
     def initSubpages(self):
