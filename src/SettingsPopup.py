@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QHBoxLayout, QHeaderView, QLabel, QTreeView, QTreeWidget, QTreeWidgetItem,
     QToolBar, QLineEdit, QCheckBox, QCompleter, QSpacerItem, QSizePolicy,
     QComboBox, QMessageBox, QDialog, QDialogButtonBox, QFileSystemModel,
-    QDirModel)
+    QDirModel, QFileDialog)
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt, QModelIndex
 import sqlite3
@@ -108,29 +108,36 @@ class Organizer(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.initUI()
+        self.initVariables()
 
     def initUI(self):
         mainlayout = QFormLayout()
         # Add elements
         self.organizeFileCheckBox = QCheckBox(self)
+        self.organizeFileCheckBox.stateChanged.connect(self.organizeStateChanged)
         organizeFileLabel = QLabel("Organize my files")
 
         copyFileLayout = QHBoxLayout()
         copyFileLabel = QLabel("    Copy files to")
         self.copyFileLineEdit = QLineEdit(self)
         self.copyFileButton = QPushButton("Browse...")
+        self.copyFileButton.clicked.connect(self.copyFileBrowse)
         copyFileLayout.addWidget(copyFileLabel)
         copyFileLayout.addWidget(self.copyFileLineEdit)
         copyFileLayout.addWidget(self.copyFileButton)
 
         self.sortFileCheckBox = QCheckBox(self)
+        self.sortFileCheckBox.stateChanged.connect(self.sortStateChanged)
         sortFileLabel = QLabel("Sort files into subdirectories")
         self.renameFileCheckBox = QCheckBox(self)
+        self.renameFileCheckBox.stateChanged.connect(self.renameStateChanged)
         renameFileLabel = QLabel("Rename files")
         # Buttons
         buttonLayout = QHBoxLayout()
         self.applyButton = QPushButton("Apply", self)
         self.resetButton = QPushButton("Reset", self)
+        self.applyButton.clicked.connect(self.apply)
+        self.applyButton.setEnabled(False)
         hspacer = QWidget()
         hspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         vspacer = QWidget()
@@ -144,13 +151,70 @@ class Organizer(QWidget):
         mainlayout.addRow(copyFileLayout)
         mainlayout.addRow(self.sortFileCheckBox, sortFileLabel)
         mainlayout.addRow(self.renameFileCheckBox, renameFileLabel)
-        # mainlayout.addRow(serverLabel, self.serverLineEdit)
-        # mainlayout.addRow(portLabel, self.portLineEdit)
-        # mainlayout.addRow(usernameLabel, self.usernameLineEdit)
-        # mainlayout.addRow(passwordLabel, self.passwordLineEdit)
         mainlayout.addRow(vspacer)
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
+
+    def initVariables(self):
+        settings = readSettingItems(['Organizer'])
+        if 'Organizer' in settings.keys():
+            if 'Organize' in settings['Organizer'].keys():
+                self.organize = settings['Organizer']['Organize']
+                self.organizeFileCheckBox.setCheckState(self.organize)
+            else:
+                self.organize = 0
+                self.organizeFileCheckBox.setCheckState(self.organize)
+            if 'Path' in settings['Organizer'].keys():
+                self.chosenDir = settings['Organizer']['Path']
+                self.copyFileLineEdit.setText(self.chosenDir)
+            else:
+                self.chosenDir = ""
+                self.copyFileLineEdit.setText(self.chosenDir)
+            if 'Sort' in settings['Organizer'].keys():
+                self.sort = settings['Organizer']['Sort']
+                self.sortFileCheckBox.setCheckState(self.sort)
+            else:
+                self.sort = 0
+                self.sortFileCheckBox.setCheckState(self.sort)
+            if 'Rename' in settings['Organizer'].keys():
+                self.rename = settings['Organizer']['Rename']
+                self.renameFileCheckBox.setCheckState(self.rename)
+            else:
+                self.rename = 0
+                self.renameFileCheckBox.setCheckState(self.rename)
+
+    def organizeStateChanged(self, state):
+        if self.organize != state:
+            self.organize = state
+            self.applyButton.setEnabled(True)
+
+    def sortStateChanged(self, state):
+        if self.sort != state:
+            self.sort = state
+            self.applyButton.setEnabled(True)
+
+    def renameStateChanged(self, state):
+        if self.rename != state:
+            self.rename = state
+            self.applyButton.setEnabled(True)
+
+    def copyFileBrowse(self):
+        dlg = QFileDialog()
+        dlg.setFileMode(QFileDialog.Directory)
+        newChosenDir = dlg.getExistingDirectory()
+        if self.chosenDir != newChosenDir:
+            self.chosenDir = newChosenDir
+            self.copyFileLineEdit.setText(self.chosenDir)
+            self.applyButton.setEnabled(True)
+
+    def apply(self):
+        data = {'Organizer': {'Organize': self.organize,
+                              'Path': self.chosenDir,
+                              'Sort': self.sort,
+                              'Rename': self.rename}
+               }
+        writeSettingItems(data)
+        self.applyButton.setEnabled(False)
 
 class CheckableDirModel(QDirModel):
     updateCheckBoxSignal = pyqtSignal([QModelIndex])
