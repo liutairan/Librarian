@@ -255,7 +255,7 @@ class Organizer(QWidget):
         self.applyButton.setEnabled(False)
 
 class CheckableDirModel(QDirModel):
-    updateCheckBoxSignal = pyqtSignal([QModelIndex])
+    updateCheckBoxSignal = pyqtSignal([QModelIndex, int])
     def __init__(self, parent=None):
         QDirModel.__init__(self, None)
         self.checks = {}
@@ -280,7 +280,7 @@ class CheckableDirModel(QDirModel):
         if (role == Qt.CheckStateRole and index.column() == 0):
             self.checks[index] = value
             #print(index, value)
-            self.updateCheckBoxSignal.emit(index)
+            self.updateCheckBoxSignal.emit(index, value)
             return True
 
         return QDirModel.setData(self, index, value, role)
@@ -289,6 +289,7 @@ class Watch(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.initUI()
+        self.initVariables()
 
     def initUI(self):
         mainlayout = QFormLayout()
@@ -304,10 +305,12 @@ class Watch(QWidget):
         self.tree.setColumnHidden(2, True)
         self.tree.setColumnHidden(3, True)
         self.tree.setSortingEnabled(True)
-        self.model.updateCheckBoxSignal.connect(self.update)
+        self.model.updateCheckBoxSignal.connect(self.updateCheckBoxes)
 
         buttonLayout = QHBoxLayout()
         self.applyButton = QPushButton("Apply", self)
+        self.applyButton.clicked.connect(self.apply)
+        self.applyButton.setEnabled(False)
         self.resetButton = QPushButton("Reset", self)
         hspacer = QWidget()
         hspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -323,13 +326,52 @@ class Watch(QWidget):
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
 
-    def update(self, value):
-        fullpath = ""
-        currentIndex = value
-        while currentIndex.isValid():
-            fullpath = os.path.join(currentIndex.data(), fullpath)
-            currentIndex = currentIndex.parent()
-        print(fullpath)
+    def initVariables(self):
+        settings = readSettingItems(['Watched'])
+        if 'Watched' in settings.keys():
+            if len(settings['Watched']):
+                self.watchList = settings['Watched']
+                if len(self.watchList):
+                    for watchItem in self.watchList:
+                        tempPath = watchItem[0]
+                        tempIndex = self.model.index(tempPath, 0)
+                        retData = self.model.filePath(tempIndex)
+                        if len(retData):
+                            self.model.setData(tempIndex, watchItem[1], Qt.CheckStateRole)
+            else:
+                self.watchList = []
+
+    def updateCheckBoxes(self, index, value):
+        changeFlag = False
+        # fullpath = ""
+        # currentIndex = index
+        # while currentIndex.isValid():
+        #     fullpath = os.path.join(currentIndex.data(), fullpath)
+        #     currentIndex = currentIndex.parent()
+        fullpath = self.model.filePath(index)
+        newWatchMission = [fullpath, value]
+        if newWatchMission in self.watchList:
+            pass
+        else:
+            if len(self.watchList):
+                tempList = list(filter(lambda x: fullpath in x, self.watchList))
+                if len(tempList) == 1:
+                    tempMissionIndex = self.watchList.index(tempList[0])
+                    if value == 0:
+                        self.watchList.pop(tempMissionIndex)
+                    else:
+                        self.watchList[tempMissionIndex] = newWatchMission
+                elif len(tempList) == 0:
+                    if value != 0:
+                        self.watchList.append(newWatchMission)
+                changeFlag = True
+        self.applyButton.setEnabled(True)
+        # to do: update checkboxes states: 0, 1, 2.
+
+    def apply(self):
+        data = {'Watched': self.watchList }
+        writeSettingItems(data)
+        self.applyButton.setEnabled(False)
 
 class Proxy(QWidget):
     def __init__(self, parent=None):
