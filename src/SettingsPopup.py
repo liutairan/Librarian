@@ -74,6 +74,7 @@ class Account(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.initUI()
+        self.initVariables()
 
     def initUI(self):
         mainlayout = QFormLayout()
@@ -87,12 +88,13 @@ class Account(QWidget):
 
         buttonLayout = QHBoxLayout()
         self.loginButton = QPushButton("Login", self)
-        self.logoutButton = QPushButton("Logout", self)
+        self.loginButton.clicked.connect(self.loginout)
+        #self.logoutButton = QPushButton("Logout", self)
         hspacer = QWidget()
         hspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         buttonLayout.addWidget(hspacer)
         buttonLayout.addWidget(self.loginButton)
-        buttonLayout.addWidget(self.logoutButton)
+        #buttonLayout.addWidget(self.logoutButton)
 
         vspacer = QWidget()
         vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -103,6 +105,42 @@ class Account(QWidget):
         mainlayout.addRow(vspacer)
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
+
+    def initVariables(self):
+        settings = readSettingItems(['Account'])
+        if 'Account' in settings.keys():
+            if 'Username' in settings['Account'].keys():
+                self.username = settings['Account']['Username']
+                self.usernameLineEdit.setText(self.username)
+            else:
+                self.username = ""
+                self.username.setText(self.username)
+            if 'Password' in settings['Account'].keys():
+                self.password = settings['Account']['Password']
+                self.passwordLineEdit.setText(self.password)
+            else:
+                self.password = ""
+                self.passwordLineEdit.setText(self.password)
+            self.showPasswordCheckBox.setCheckState(0)
+            self.checkLogin()
+
+    def loginout(self):
+        if self.loginButton.text() == "Login":
+            self.loginButton.setText("Logout")
+            self.usernameLineEdit.setEnabled(False)
+            self.passwordLineEdit.setEnabled(False)
+        elif self.loginButton.text() == "Logout":
+            self.loginButton.setText("Login")
+            self.usernameLineEdit.setEnabled(True)
+            self.passwordLineEdit.setEnabled(True)
+            self.usernameLineEdit.setText("")
+            self.passwordLineEdit.setText("")
+
+    def checkLogin(self):
+        if len(self.username)*len(self.password):
+            self.loginButton.setText("Logout")
+            self.usernameLineEdit.setEnabled(False)
+            self.passwordLineEdit.setEnabled(False)
 
 class Organizer(QWidget):
     def __init__(self, parent=None):
