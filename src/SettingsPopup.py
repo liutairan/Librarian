@@ -365,7 +365,7 @@ class Watch(QWidget):
                     if value != 0:
                         self.watchList.append(newWatchMission)
                 changeFlag = True
-        self.applyButton.setEnabled(True)
+        self.applyButton.setEnabled(changeFlag)
         # to do: update checkboxes states: 0, 1, 2.
 
     def apply(self):
