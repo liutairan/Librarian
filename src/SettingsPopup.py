@@ -279,7 +279,6 @@ class CheckableDirModel(QDirModel):
     def setData(self, index, value, role):
         if (role == Qt.CheckStateRole and index.column() == 0):
             self.checks[index] = value
-            #print(index, value)
             self.updateCheckBoxSignal.emit(index, value)
             return True
 
@@ -304,7 +303,8 @@ class Watch(QWidget):
         self.tree.setColumnHidden(1, True)
         self.tree.setColumnHidden(2, True)
         self.tree.setColumnHidden(3, True)
-        self.tree.setSortingEnabled(True)
+        self.tree.setSortingEnabled(False)
+        self.tree.setHeaderHidden(True)
         self.model.updateCheckBoxSignal.connect(self.updateCheckBoxes)
 
         buttonLayout = QHBoxLayout()
@@ -336,18 +336,19 @@ class Watch(QWidget):
                         tempPath = watchItem[0]
                         tempIndex = self.model.index(tempPath, 0)
                         retData = self.model.filePath(tempIndex)
+                        # Set checkbox
                         if len(retData):
                             self.model.setData(tempIndex, watchItem[1], Qt.CheckStateRole)
+                            # Expand path
+                            while tempIndex.parent().isValid():
+                                tempIndex = tempIndex.parent()
+                                self.tree.expand(tempIndex)
+
             else:
                 self.watchList = []
 
     def updateCheckBoxes(self, index, value):
         changeFlag = False
-        # fullpath = ""
-        # currentIndex = index
-        # while currentIndex.isValid():
-        #     fullpath = os.path.join(currentIndex.data(), fullpath)
-        #     currentIndex = currentIndex.parent()
         fullpath = self.model.filePath(index)
         newWatchMission = [fullpath, value]
         if newWatchMission in self.watchList:
