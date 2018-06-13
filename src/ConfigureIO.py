@@ -41,10 +41,10 @@ if __name__ == "__main__":
                              'Copy': '/.../',
                              'Sort': True,
                              'Rename': True},
-               'Watched': ['/Test1/', '/Test2/', '/Test3'],
-               'Proxy': {'Type': '',
+               'Watched': [],
+               'Proxy': {'Type': 0,
                          'Server': '',
-                         'Port': '',
+                         'Port': 0,
                          'Username': '',
                          'Password': ''}
                }

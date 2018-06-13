@@ -2,6 +2,7 @@ import sys
 import os
 import string
 from random import *
+import base64
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
     QTabWidget, QTableWidget, QTableWidgetItem, QFormLayout, QVBoxLayout,
@@ -57,8 +58,13 @@ class General(QWidget):
 
     def initVariables(self):
         settings = readSettingItems(['General'])
-        self.recent = settings['General']['Recent']
-        self.recentComboBox.setCurrentIndex(self.recent)
+        if 'General' in settings.keys():
+            if 'Recent' in settings['General'].keys():
+                self.recent = settings['General']['Recent']
+                self.recentComboBox.setCurrentIndex(self.recent)
+            else:
+                self.recent = 0
+                self.recentComboBox.setCurrentIndex(self.recent)
 
     def apply(self):
         data = {'General': {'Recent': self.recent}}
@@ -378,30 +384,40 @@ class Proxy(QWidget):
     def __init__(self, parent=None):
         super(QWidget, self).__init__(parent)
         self.initUI()
+        self.initVariables()
 
     def initUI(self):
         mainlayout = QFormLayout()
         # Create widget elements
         proxytypeLabel = QLabel("Proxy type")
         self.proxytypeComboBox = QComboBox(self)
+        proxyTypeItemList = ["No Proxy", "HTTP Proxy", "SOCKS 5 Proxy"]
+        self.proxytypeComboBox.addItems(proxyTypeItemList)
+        self.proxytypeComboBox.currentIndexChanged.connect(self.proxyTypeChanged)
         serverLabel = QLabel("Server")
         self.serverLineEdit = QLineEdit(self)
+        self.serverLineEdit.textChanged.connect(self.serverTextChanged)
         portLabel = QLabel("Port")
         self.portLineEdit = QLineEdit(self)
+        self.portLineEdit.textChanged.connect(self.portTextChanged)
         usernameLabel = QLabel("Username (if required)")
         self.usernameLineEdit = QLineEdit(self)
+        self.usernameLineEdit.textChanged.connect(self.usernameTextChanged)
         passwordLabel = QLabel("Password (if required)")
         self.passwordLineEdit = QLineEdit(self)
+        self.passwordLineEdit.textChanged.connect(self.passwordTextChanged)
+        self.passwordLineEdit.setEchoMode(QLineEdit.Password)
 
         buttonLayout = QHBoxLayout()
         self.applyButton = QPushButton("Apply", self)
+        self.applyButton.clicked.connect(self.apply)
+        self.applyButton.setEnabled(False)
         self.resetButton = QPushButton("Reset", self)
         hspacer = QWidget()
         hspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         buttonLayout.addWidget(hspacer)
         buttonLayout.addWidget(self.applyButton)
         buttonLayout.addWidget(self.resetButton)
-
 
         vspacer = QWidget()
         vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -414,6 +430,82 @@ class Proxy(QWidget):
         mainlayout.addRow(vspacer)
         mainlayout.addRow(buttonLayout)
         self.setLayout(mainlayout)
+
+    def initVariables(self):
+        settings = readSettingItems(['Proxy'])
+        if 'Proxy' in settings.keys():
+            # Proxy Type
+            if 'Type' in settings['Proxy'].keys():
+                self.proxytype = settings['Proxy']['Type']
+                self.proxytypeComboBox.setCurrentIndex(self.proxytype)
+            else:
+                self.proxytype = 0
+                self.proxytypeComboBox.setCurrentIndex(self.proxytype)
+            # Server
+            if 'Server' in settings['Proxy'].keys():
+                self.server = settings['Proxy']['Server']
+                self.serverLineEdit.setText(self.server)
+            else:
+                self.server = ""
+                self.serverLineEdit.setText(self.server)
+            # Port
+            if 'Port' in settings['Proxy'].keys():
+                self.port = settings['Proxy']['Port']
+                self.portLineEdit.setText(str(self.port))
+            else:
+                self.port = 0
+                self.portLineEdit.setText(str(self.port))
+            # Username
+            if 'Username' in settings['Proxy'].keys():
+                self.username = settings['Proxy']['Username']
+                self.usernameLineEdit.setText(self.username)
+            else:
+                self.username = ""
+                self.usernameLineEdit.setText(self.username)
+            # Password
+            if 'Password' in settings['Proxy'].keys():
+                self.password = settings['Proxy']['Password']
+                self.passwordLineEdit.setText(self.password)
+            else:
+                self.password = ""
+                self.passwordLineEdit.setText(self.password)
+
+    def proxyTypeChanged(self, item):
+        if self.proxytype != item:
+            self.proxytype = item
+            self.applyButton.setEnabled(True)
+
+    def serverTextChanged(self, item):
+        if item != self.server:
+            self.server = item
+            self.applyButton.setEnabled(True)
+
+    def portTextChanged(self, item):
+        itemNum = 0
+        if len(item):
+            itemNum = int(item)
+        if itemNum != self.port:
+            self.port = itemNum
+            self.applyButton.setEnabled(True)
+
+    def usernameTextChanged(self, item):
+        if item != self.username:
+            self.username = item
+            self.applyButton.setEnabled(True)
+
+    def passwordTextChanged(self, item):
+        if item != self.password:
+            self.password = item
+            self.applyButton.setEnabled(True)
+
+    def apply(self):
+        data = {'Proxy': {'Type': self.proxytype,
+                          'Server': self.server,
+                          'Port': self.port,
+                          'Username': self.username,
+                          'Password': self.password}}
+        writeSettingItems(data)
+        self.applyButton.setEnabled(False)
 
 class SettingsPopup(QWidget):
     def __init__(self, parent=None):
