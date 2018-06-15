@@ -1,3 +1,8 @@
+BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
+                   'incollection', 'inproceedings', 'manual', 'mastersthesis',
+                   'misc', 'phdthesis', 'proceedings', 'techreport',
+                   'unpublished'])
+
 class Article:
     def __init__(self, author="", title="", journal="", volume="", number="", year="", pages="", month="", note="", abstract=""):
         self.data = {"author"    :author,
