@@ -61,6 +61,7 @@ class App(QMainWindow):
         bar.setStyleSheet("QMenuBar::item {background-color: #EDEDED;}")
 
         fileMenu = bar.addMenu("File") # " &File"?
+
         newMenu = QAction("New",self)
         newMenu.setShortcut("Ctrl+N")
         fileMenu.addAction(newMenu)
@@ -68,11 +69,23 @@ class App(QMainWindow):
         save = QAction("Save",self)
         save.setShortcut("Ctrl+S")
         fileMenu.addAction(save)
-        fileMenu.addAction("Import")
-        fileMenu.addAction("Export")
+
         fileMenu.addSeparator()
-        quit = QAction("Quit",self)
-        fileMenu.addAction(quit)
+
+        importRef = QAction("Import", self)
+        importRef.setShortcut("Ctrl+I")
+        fileMenu.addAction(importRef)
+
+        exportRef = QAction("Export", self)
+        exportRef.setShortcut("Ctrl+E")
+        fileMenu.addAction(exportRef)
+
+        fileMenu.addSeparator()
+
+        quitMenu = QAction("Quit", self)
+        quitMenu.setShortcut("Ctrl+Q")
+        fileMenu.addAction(quitMenu)
+
         fileMenu.triggered[QAction].connect(self.menubarTrigger)
 
         editMenu = bar.addMenu("Edit")
@@ -215,6 +228,10 @@ class App(QMainWindow):
         if action == "About":
             self.about = AboutPopup()
             self.about.show()
+        elif action == "Import":
+            print("Import")
+        elif action == "Export":
+            print("Export")
         else:
             print(q.text()+" is triggered")
 
