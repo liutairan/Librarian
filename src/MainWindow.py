@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
     QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout,
     QHeaderView, QLabel, QTreeWidget, QTreeWidgetItem, QToolBar, QLineEdit,
-    QCompleter, QSizePolicy, QComboBox, QMessageBox, QDialog, QDialogButtonBox)
+    QCompleter, QSizePolicy, QComboBox, QMessageBox, QDialog, QDialogButtonBox,
+    QFileDialog)
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt
 import sqlite3
@@ -21,6 +22,8 @@ from InteractiveGraphBrowser import InteractiveGraphBrowser
 from RefTable import RefTable
 from GroupTrees import GroupTrees
 from OnlineSearchPage import OnlineSearchPage
+
+from ParseBibImport import BibTeXParser
 
 class App(QMainWindow):
     resized = pyqtSignal()
@@ -222,18 +225,31 @@ class App(QMainWindow):
             self.relationGraph = RelationGraphGenerator()
             self.relationGraph.show()
 
-
     def menubarTrigger(self, q):
         action = q.text()
         if action == "About":
             self.about = AboutPopup()
             self.about.show()
         elif action == "Import":
-            print("Import")
+            importFilePath = self.importDialog()
+            if len(importFilePath):
+                bp = BibTeXParser(importFilePath)
+                print(bp.referenceDictList)
         elif action == "Export":
             print("Export")
         else:
             print(q.text()+" is triggered")
+
+    def importDialog(self):
+        fileName = ""
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(None,
+                                                  "Import",
+                                                  "",
+                                                  "All Files (*);;BibTeX (*.bib)",
+                                                  options=options)
+        return fileName
 
     def dododo(self):
         print('Here dododo')
