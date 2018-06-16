@@ -10,8 +10,8 @@ class BibTeXParser():
 
     def __init__(self, path):
         self.path = path
-        self.readFile()
         self.referenceDictList = []
+        self.readFile()
 
     def readFile(self):
         data = []
@@ -35,7 +35,8 @@ class BibTeXParser():
         else:
             print("No valid BibTeX item found.")
         for pair in indPairs:
-            self.parseBibItem(data[pair[0]:pair[1]] )
+            refItem = self.parseBibItem(data[pair[0]:pair[1]] )
+            self.referenceDictList.append(refItem)
 
     def parseBibItem(self, bibItemList):
         bibType = "article"
@@ -44,10 +45,13 @@ class BibTeXParser():
         ind3 = bibItemList[0].index(",\n")
         bibType = bibItemList[0][ind1+1:ind2].replace(" ", "")
         citeKey = bibItemList[0][ind2+1:ind3]
+        refItem = {}
+        refItem['type'] = bibType
+        refItem['citekey'] = citeKey
         for line in bibItemList[1:]:
             if "=" in line and "\n" in line:
                 tempInd1 = line.index("=")
-                fieldKey = line[0:tempInd1].replace(" ", "")
+                fieldKey = line[0:tempInd1].replace(" ", "").replace("\t","")
                 tempInd2 = line.index("{")
                 tempInd3 = tempInd2
                 if "},\n" in line:
@@ -55,7 +59,9 @@ class BibTeXParser():
                 elif "}\n" in line:
                     tempInd3 = line.index("}\n")
                 fieldValue = line[tempInd2+1:tempInd3]
-                print([fieldKey,fieldValue])
+                refItem[fieldKey] = fieldValue
+        return refItem
+
 
 if __name__ == "__main__":
     bp = BibTeXParser("My Collection.bib")
