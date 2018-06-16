@@ -236,7 +236,9 @@ class App(QMainWindow):
                 bp = BibTeXParser(importFilePath)
                 print(bp.referenceDictList)
         elif action == "Export":
-            print("Export")
+            exportFilePath = self.exportDialog()
+            if len(exportFilePath):
+                print(exportFilePath)
         else:
             print(q.text()+" is triggered")
 
@@ -249,6 +251,22 @@ class App(QMainWindow):
                                                   "",
                                                   "All Files (*);;BibTeX (*.bib)",
                                                   options=options)
+        return fileName
+
+    def exportDialog(self):
+        fileName = ""
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, filter = QFileDialog.getSaveFileName(None,
+                                                  "Export",
+                                                  "",
+                                                  filter="All Files (*);;BibTeX (*.bib)",
+                                                  options=options)
+        extension = filter[filter.index("(")+2:filter.index(")")]
+        if fileName.endswith(extension):
+            pass
+        else:
+            fileName = fileName + extension
         return fileName
 
     def dododo(self):
