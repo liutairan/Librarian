@@ -41,18 +41,20 @@ def deleteTempCitationTable(dbConnection):
     cur.execute(sql)
     dbConnection.commit()
 
+# Checked
 def writeRefToDB(dbConnection, refDict):
-    sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels)
-              VALUES(?,?,?,?,?,?) '''
-    task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'])
-    #print(refDict)
-    #print(task)
+    sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
+              VALUES(?,?,?,?,?,?,?) '''
+    task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
     cur = dbConnection.cursor()
     cur.execute(sql, task)
     dbConnection.commit()
 
+# Checked
 def writeRefsToDB(dbConnection, refDictList):
-    pass
+    if len(refDictList):
+        for refDict in refDictList:
+            writeRefToDB(dbConnection, refDict)
 
 # Checked
 def readRefFromDBByID(dbConnection, refAbsID):
