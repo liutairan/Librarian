@@ -78,7 +78,15 @@ def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
     rows = cur.fetchall()
-    return rows
+    refItemList = []
+    if len(rows):
+        for row in rows:
+            if len(row) <= len(DatabaseReferenceStructure):
+                refItem = {}
+                for i in range(len(row)):
+                    refItem[DatabaseReferenceStructure[i]] = row[i]
+                refItemList.append(refItem)
+    return refItemList
 
 def updateRefToDBByID(dbConnection, refAbsID, value):
     sql = ''' UPDATE ReferencesData
