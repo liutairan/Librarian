@@ -1,6 +1,7 @@
 import os
 import sys
-
+import time
+from datetime import datetime
 from ReferenceStructure import *
 
 class BibTeXParser():
@@ -46,8 +47,8 @@ class BibTeXParser():
         bibType = bibItemList[0][ind1+1:ind2].replace(" ", "")
         citeKey = bibItemList[0][ind2+1:ind3]
         refItem = {}
-        refItem['type'] = bibType
-        refItem['citekey'] = citeKey
+        refItem['Type'] = bibType
+        refItem['Citekey'] = citeKey
         for line in bibItemList[1:]:
             if "=" in line and "\n" in line:
                 tempInd1 = line.index("=")
@@ -59,7 +60,22 @@ class BibTeXParser():
                 elif "}\n" in line:
                     tempInd3 = line.index("}\n")
                 fieldValue = line[tempInd2+1:tempInd3]
-                refItem[fieldKey] = fieldValue
+                fieldKey2 = fieldKey.capitalize()
+                if fieldKey2 == 'Author':
+                    fieldKey2 = 'Authors'
+                if fieldKey2 == 'Publisher':
+                    fieldKey2 = 'PubIn'
+                refItem[fieldKey2] = fieldValue
+            if 'PubIn' not in refItem:
+                refItem['PubIn'] = ""
+            if 'Labels' not in refItem:
+                refItem['Labels'] = ""
+            #currentTime = time.localtime(time.time())
+            #currentTimeStr = time.strftime('%Y-%m-%d %H:%M:%S.%f', currentTime)[:-3]
+            currentTime = datetime.now()
+            currentTimeStr = currentTime.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            refItem['AddedTime'] = currentTimeStr
+        print(refItem)
         return refItem
 
 

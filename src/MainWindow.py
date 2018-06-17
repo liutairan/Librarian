@@ -23,6 +23,7 @@ from RefTable import RefTable
 from GroupTrees import GroupTrees
 from OnlineSearchPage import OnlineSearchPage
 
+from DatabaseIO import *
 from ParseBibImport import BibTeXParser
 
 class App(QMainWindow):
@@ -46,6 +47,7 @@ class App(QMainWindow):
         self.bundle_dir = os.path.dirname(os.path.abspath(__file__))
         self.initWidgets()
         self.initSignalsSlots()
+        self.initDBConnection()
         self.setFocus()
         #print(self.focusWidget())
 
@@ -195,6 +197,14 @@ class App(QMainWindow):
         self.groupTree_widget.searchMethodTree.itemClicked.connect(self.OpenOnlineSearchPage)
         self.infotab_widget.updateRefsTableSignal.connect(self.reftable_widget.updateSingleRefByID)
 
+    def initDBConnection(self):
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
+        refs = []
+        try:
+            self.conn = createConnectionToDB(database)
+        except:
+            buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
+
     def resizeEvent(self,event):
         self.resized.emit()
         return super(App, self).resizeEvent(event)
@@ -234,7 +244,8 @@ class App(QMainWindow):
             importFilePath = self.importDialog()
             if len(importFilePath):
                 bp = BibTeXParser(importFilePath)
-                print(bp.referenceDictList)
+                writeRefsToDB(self.conn, bp.referenceDictList)
+                #print(bp.referenceDictList)
         elif action == "Export":
             exportFilePath = self.exportDialog()
             if len(exportFilePath):
