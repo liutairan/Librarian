@@ -102,14 +102,14 @@ class RefTable(QWidget):
 
     def setSingleRef(self, ref, rowInd):
         self.mainTable.setSortingEnabled(False)
-        self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref[5]))) # Year
-        self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref[1])) # Title
-        self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref[4])) # PubIn
-        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref[2])) # Authors
-        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref[3])) # Type
-        self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref[7])) # Add Date, change to real field later
-        self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref[6])) # Labels
-        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref[0]).zfill(10))) # RefAbsID
+        self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref['Year']))) # Year
+        self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref['Title'])) # Title
+        self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref['PubIn'])) # PubIn
+        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref['Authors'])) # Authors
+        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref['Type'])) # Type
+        self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref['AddedTime'])) # Add Date, change to real field later
+        self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref['Labels'])) # Labels
+        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref['ID']).zfill(10))) # RefAbsID
         self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
@@ -185,5 +185,5 @@ class RefTable(QWidget):
     def updateSingleRefByID(self):
         currRow = self.mainTable.currentRow()
         refAbsoluteID = int(self.mainTable.item(currRow, 7).text())
-        refRow = readRefFromDBByID(self.conn, refAbsoluteID)
-        self.setSingleRef(refRow[0], currRow)
+        refItem = readRefFromDBByID(self.conn, refAbsoluteID)
+        self.setSingleRef(refItem, currRow)

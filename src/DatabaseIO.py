@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 
+from ReferenceStructure import *
+
 def createDB(db_path):
     pass
 
@@ -63,7 +65,11 @@ def readRefFromDBByID(dbConnection, refAbsID):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData WHERE id=?", (refAbsID,))
     rows = cur.fetchall()
-    return rows
+    refItem = {}
+    if len(rows[0]) <= len(DatabaseReferenceStructure):
+        for i in range(len(rows[0])):
+            refItem[DatabaseReferenceStructure[i]] = rows[0][i]
+    return refItem
 
 def readRefsFromDBByIDs(dbConnection, refAbsIDList):
     pass
