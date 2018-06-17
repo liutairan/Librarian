@@ -3,6 +3,18 @@ BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
                    'misc', 'phdthesis', 'proceedings', 'techreport',
                    'unpublished'])
 
+DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
+                              'Year', 'Labels', 'AddedTime']
+
+ArticleFieldSet = set(["author", "title", "journal", "volume", "number",
+                       "year", "pages", "month", "note", "abstract"])
+BookFieldSet = set(["author", "title", "volume", "number",
+                    "year", "pages", "month", "note"])
+
+ReferenceStandardStructure = {'article': ArticleFieldSet,
+                              'book': BookFieldSet
+                             }
+
 class Article:
     def __init__(self, author="", title="", journal="", volume="", number="", year="", pages="", month="", note="", abstract=""):
         self.data = {"author"    :author,

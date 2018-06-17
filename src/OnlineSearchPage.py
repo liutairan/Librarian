@@ -173,20 +173,19 @@ class OnlineSearchPage(QWidget):
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
     def updateInfo(self, refAbsID):
-        refInfoList = readRefFromDBByID(self.conn, refAbsID)
-        if len(refInfoList) >= 1:
-            tempRef = refInfoList[0]
-            textStringList = ["Title: "        + tempRef[1],
-                              "Authors: "      + tempRef[2],
-                              "Type: "         + tempRef[3],
-                              "Journal: "      + tempRef[4],
-                              "Year: "         + str(tempRef[5]),
+        refItem = readRefFromDBByID(self.conn, refAbsID)
+        if len(refItem) >= 1:
+            textStringList = ["Title: "        + refItem['Title'],
+                              "Authors: "      + refItem['Authors'],
+                              "Type: "         + refItem['Type'],
+                              "Journal: "      + refItem['PubIn'],
+                              "Year: "         + str(refItem['Year']),
                               "Volume: "       + " ",
                               "Issue: "        + " ",
                               "Pages: "        + " ",
-                              "Labels: "       + " ",
-                              "Added Date:"    + " ",
-                              "Reference ID: " + str(tempRef[0]).zfill(10)]
+                              "Labels: "       + refItem['Labels'],
+                              "Added Date:"    + refItem['AddedTime'],
+                              "Reference ID: " + str(refItem['ID']).zfill(10)]
             textString = "\n\n".join(textStringList)
             self.label1.setText(textString)
 

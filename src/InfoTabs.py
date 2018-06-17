@@ -79,20 +79,19 @@ class InfoTabs(QWidget):
 
     def updateInfo(self, refAbsID):
         self.refAbsID = refAbsID
-        refInfoList = readRefFromDBByID(self.conn, refAbsID)
-        if len(refInfoList) >= 1:
-            tempRef = refInfoList[0]
-            textStringList = ["Title: "        + tempRef[1],
-                              "Authors: "      + tempRef[2],
-                              "Type: "         + tempRef[3],
-                              "Journal: "      + tempRef[4],
-                              "Year: "         + str(tempRef[5]),
+        refItem = readRefFromDBByID(self.conn, refAbsID)
+        if len(refItem):
+            textStringList = ["Title: "        + refItem['Title'],
+                              "Authors: "      + refItem['Authors'],
+                              "Type: "         + refItem['Type'],
+                              "Journal: "      + refItem['PubIn'],
+                              "Year: "         + str(refItem['Year']),
                               "Volume: "       + " ",
                               "Issue: "        + " ",
                               "Pages: "        + " ",
-                              "Labels: "       + tempRef[6],
-                              "Added Time:"    + tempRef[7],
-                              "Reference ID: " + str(tempRef[0]).zfill(10)]
+                              "Labels: "       + refItem['Labels'],
+                              "Added Time:"    + refItem['AddedTime'],
+                              "Reference ID: " + str(refItem['ID']).zfill(10)]
             textString = "\n\n".join(textStringList)
             self.infoLabel.setText(textString)
 

@@ -280,12 +280,12 @@ class InteractiveGraphBrowser(QDialog):
         if refMsg == "-1":
             self.refDetailLabel.setText("\tClick on a node to show detail information")
         else:
-            cited,ref = self.refDetail(refMsg)
-            if len(ref) == 1:
+            cited,refItem = self.refDetail(refMsg)
+            if len(refItem) > 0:
                 labelText = "\t" + \
                             "RefID: " + refMsg + "\n\t" + \
-                            "Title: " + ref[0][1] + "\n\t" + \
-                            "Authors: " + ref[0][2] + "\n\t" + \
+                            "Title: " + refItem['Title'] + "\n\t" + \
+                            "Authors: " + refItem['Authors'] + "\n\t" + \
                             "Cited: " + cited + "\n"
             elif len(ref) == 0:
                 labelText = "\t" + \
@@ -296,11 +296,11 @@ class InteractiveGraphBrowser(QDialog):
 
     def refDetail(self, refAbsID):
         cited = getCitationsFromDB(self.conn, refAbsID)
-        ref = readRefFromDBByID(self.conn, refAbsID)
+        refItem = readRefFromDBByID(self.conn, refAbsID)
         citedStr = ""
         if cited:
             citedStr = ",".join(cited)
-        return citedStr, ref
+        return citedStr, refItem
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

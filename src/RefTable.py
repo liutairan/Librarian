@@ -46,13 +46,13 @@ class RefTable(QWidget):
         self.mainTable.setColumnWidth(7, 120) # RefAbsID
         # Load refs from database
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
-        refs = []
+        refItemList = []
         try:
             self.conn = createConnectionToDB(database)
-            refs = self.getRefsData()
+            refItemList = self.getRefsData()
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-        self.setRefsTable(refs)
+        self.setRefsTable(refItemList)
         #self.reftable_widget.setGeometry(self.width/5, 0, self.width*7/15, self.height)
         #self.mainTable.itemClicked.connect(self.parent().reftableClicked)
         self.mainTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -78,47 +78,57 @@ class RefTable(QWidget):
             #print("Descending")
 
     def getRefsData(self):
-        refRows = readAllRefsFromDB(self.conn)
-        return refRows
+        refItemList = readAllRefsFromDB(self.conn)
+        return refItemList
 
     def setRefsTable(self, refs):
         # Clean old contents
         self.mainTable.clearContents()
         # Must disable sorting table first, otherwise error will occur
         self.mainTable.setSortingEnabled(False)
-
         for rowInd in range(len(refs)):
-            self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd][5]))) # Year
-            self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd][1])) # Title
-            self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd][4])) # PubIn
-            self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd][2])) # Authors
-            self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd][3])) # Type
-            self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd][7])) # Add Date, change to real field later
-            self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd][6])) # Labels
-            self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd][0]).zfill(10))) # RefAbsID
+            self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd]['Year']))) # Year
+            self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd]['Title'])) # Title
+            self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd]['PubIn'])) # PubIn
+            self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd]['Authors'])) # Authors
+            self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd]['Type'])) # Type
+            self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd]['AddedTime'])) # Add Date, change to real field later
+            self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd]['Labels'])) # Labels
+            self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd]['ID']).zfill(10))) # RefAbsID
 
         # Enable sorting again.
         self.mainTable.setSortingEnabled(True)
 
     def setSingleRef(self, ref, rowInd):
         self.mainTable.setSortingEnabled(False)
-        self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref[5]))) # Year
-        self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref[1])) # Title
-        self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref[4])) # PubIn
-        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref[2])) # Authors
-        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref[3])) # Type
-        self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref[7])) # Add Date, change to real field later
-        self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref[6])) # Labels
-        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref[0]).zfill(10))) # RefAbsID
+        self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref['Year']))) # Year
+        self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref['Title'])) # Title
+        self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref['PubIn'])) # PubIn
+        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref['Authors'])) # Authors
+        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref['Type'])) # Type
+        self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref['AddedTime'])) # Add Date, change to real field later
+        self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref['Labels'])) # Labels
+        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref['ID']).zfill(10))) # RefAbsID
         self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
-        refs = []
+        refItemList = []
         try:
-            refs = self.getRefsData()
+            refItemList = self.getRefsData()
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Update Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-        self.setRefsTable(refs)
+        self.setRefsTable(refItemList)
+
+    def refRowsToDictList(self, refRows):
+        refItemList = []
+        if len(refRows):
+            for row in refRows:
+                if len(row) <= len(DatabaseReferenceStructure):
+                    refItem = {}
+                    for i in range(len(row)):
+                        refItem[DatabaseReferenceStructure[i]] = row[i]
+                    refItemList.append(refItem)
+        return refItemList
 
     def updateRefsTableByKey(self, showingMethod, keyword):
         rows = []
@@ -157,7 +167,7 @@ class RefTable(QWidget):
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM ReferencesData")
             rows = cur.fetchall()
-        self.setRefsTable(rows)
+        self.setRefsTable(self.refRowsToDictList(rows))
 
     def updateRefsTableForRecent(self):
         now = QDateTime.currentDateTime()
@@ -166,11 +176,11 @@ class RefTable(QWidget):
         cur = self.conn.cursor()
         cur.execute("SELECT * FROM ReferencesData WHERE AddedTime>?", (previousTimeKey,))
         rows = cur.fetchall()
-        self.setRefsTable(rows)
+        self.setRefsTable(self.refRowsToDictList(rows))
 
     def updateRefsTableForTrash(self):
         rows = []
-        self.setRefsTable(rows)
+        self.setRefsTable(self.refRowsToDictList(rows))
 
     def updateRefsTableByLocalChoice(self, keyword):
         if keyword == "All References":
@@ -185,5 +195,5 @@ class RefTable(QWidget):
     def updateSingleRefByID(self):
         currRow = self.mainTable.currentRow()
         refAbsoluteID = int(self.mainTable.item(currRow, 7).text())
-        refRow = readRefFromDBByID(self.conn, refAbsoluteID)
-        self.setSingleRef(refRow[0], currRow)
+        refItem = readRefFromDBByID(self.conn, refAbsoluteID)
+        self.setSingleRef(refItem, currRow)
