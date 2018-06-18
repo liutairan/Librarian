@@ -273,11 +273,12 @@ class App(QMainWindow):
                                                   "",
                                                   filter="All Files (*);;BibTeX (*.bib)",
                                                   options=options)
-        extension = filter[filter.index("(")+2:filter.index(")")]
-        if fileName.endswith(extension):
-            pass
-        else:
-            fileName = fileName + extension
+        if len(fileName):
+            extension = filter[filter.index("(")+2:filter.index(")")]
+            if fileName.endswith(extension):
+                pass
+            else:
+                fileName = fileName + extension
         return fileName
 
     def dododo(self):
