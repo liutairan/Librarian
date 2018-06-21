@@ -25,6 +25,7 @@ from OnlineSearchPage import OnlineSearchPage
 
 from DatabaseIO import *
 from ParseBibImport import BibTeXParser
+from BibTeXWriter import BibTeXWriter
 
 class App(QMainWindow):
     resized = pyqtSignal()
@@ -245,11 +246,13 @@ class App(QMainWindow):
             if len(importFilePath):
                 bp = BibTeXParser(importFilePath)
                 writeRefsToDB(self.conn, bp.referenceDictList)
-                #print(bp.referenceDictList)
         elif action == "Export":
+            selectedRefIDList = self.acquireSelectedRefItems()
+            selectedRefDictList = readRefsFromDBByIDs(self.conn, selectedRefIDList)
             exportFilePath = self.exportDialog()
             if len(exportFilePath):
-                print(exportFilePath)
+                if len(selectedRefIDList):
+                    bw = BibTeXWriter(exportFilePath, selectedRefDictList)
         else:
             print(q.text()+" is triggered")
 
@@ -263,6 +266,14 @@ class App(QMainWindow):
                                                   "All Files (*);;BibTeX (*.bib)",
                                                   options=options)
         return fileName
+
+    def acquireSelectedRefItems(self):
+        selectedRefList = []
+        for selectedItem in self.reftable_widget.mainTable.selectedItems():
+            currRow = selectedItem.row()
+            refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
+            selectedRefList.append(refAbsoluteID)
+        return selectedRefList
 
     def exportDialog(self):
         fileName = ""
