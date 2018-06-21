@@ -74,7 +74,11 @@ def readRefFromDBByID(dbConnection, refAbsID):
     return refItem
 
 def readRefsFromDBByIDs(dbConnection, refAbsIDList):
-    pass
+    refDictList = []
+    for refID in refAbsIDList:
+        refItem = readRefFromDBByID(dbConnection, refID)
+        refDictList.append(refItem)
+    return refDictList
 
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
