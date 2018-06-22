@@ -12,14 +12,14 @@ class BibTeXWriter:
         outputString = ""
         for ref in self.referenceDictList:
             refStr = self.formatBibItem(ref)
-            print(refStr)
             outputString = outputString + refStr
-        print(outputString)
+        with open(self.path, 'w') as outf:
+            outf.write(outputString)
 
 
     def formatBibItem(self, refItem):
         bibItemStr = ""
         if refItem['Type'].lower() in BibTeXTypes:
-            bibItemStr = bibItemStr + "@" + refItem['Type'].lower() + "{"
+            bibItemStr = bibItemStr + "@" + refItem['Type'].lower() + "{" + "\n"
             bibItemStr = bibItemStr + "}\n"
         return bibItemStr
