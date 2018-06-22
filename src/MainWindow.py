@@ -274,6 +274,7 @@ class App(QMainWindow):
             currRow = selectedItem.row()
             refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
             selectedRefList.append(refAbsoluteID)
+        selectedRefList = list(set(selectedRefList))
         return selectedRefList
 
     def exportDialog(self):
