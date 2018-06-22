@@ -47,7 +47,7 @@ class BibTeXParser():
         bibType = bibItemList[0][ind1+1:ind2].replace(" ", "")
         citeKey = bibItemList[0][ind2+1:ind3]
         refItem = {}
-        refItem['Type'] = bibType
+        refItem['Type'] = bibType.capitalize()
         refItem['Citekey'] = citeKey
         for line in bibItemList[1:]:
             if "=" in line and "\n" in line:
@@ -70,12 +70,10 @@ class BibTeXParser():
                 refItem['PubIn'] = ""
             if 'Labels' not in refItem:
                 refItem['Labels'] = ""
-            #currentTime = time.localtime(time.time())
-            #currentTimeStr = time.strftime('%Y-%m-%d %H:%M:%S.%f', currentTime)[:-3]
             currentTime = datetime.now()
             currentTimeStr = currentTime.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             refItem['AddedTime'] = currentTimeStr
-        print(refItem)
+        #print(refItem)
         return refItem
 
 

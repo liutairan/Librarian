@@ -73,6 +73,7 @@ def readRefFromDBByID(dbConnection, refAbsID):
             refItem[DatabaseReferenceStructure[i]] = rows[0][i]
     return refItem
 
+# Checked
 def readRefsFromDBByIDs(dbConnection, refAbsIDList):
     refDictList = []
     for refID in refAbsIDList:
