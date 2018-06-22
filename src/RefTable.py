@@ -58,6 +58,7 @@ class RefTable(QWidget):
         self.mainTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.mainTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.mainTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.mainTable.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Connect sorting signal
         self.mainTable.setSortingEnabled(True)
