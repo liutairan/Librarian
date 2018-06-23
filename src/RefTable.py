@@ -1,6 +1,7 @@
 import sys
 import os
 import string
+import math
 from random import *
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
@@ -114,6 +115,8 @@ class RefTable(QWidget):
         self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
+        self.rowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
+        self.mainTable.setRowCount(self.rowNum)
         refItemList = []
         try:
             refItemList = self.getRefsData()
