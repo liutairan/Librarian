@@ -61,6 +61,9 @@ class BibTeXParser():
                     tempInd3 = line.index("}\n")
                 fieldValue = line[tempInd2+1:tempInd3]
                 fieldKey2 = fieldKey.capitalize()
+                if fieldKey2 == 'Title':
+                    fieldValue = fieldValue.replace("{","")
+                    fieldValue = fieldValue.replace("}","")
                 if fieldKey2 == 'Author':
                     fieldKey2 = 'Authors'
                 if fieldKey2 == 'Publisher':

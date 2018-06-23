@@ -18,7 +18,6 @@ class BibTeXWriter:
 
 
     def formatBibItem(self, refItem):
-        print(refItem)
         bibItemStr = ""
         if refItem['Type'].lower() in BibTeXTypes:
             bibtexType = refItem['Type'].lower()
