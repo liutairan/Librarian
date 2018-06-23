@@ -20,6 +20,13 @@ def createConnectionToDB(db_file):
         print(e)
         return None
 
+def countRefs(dbConnection):
+    sql = "SELECT Count(*) FROM ReferencesData"
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    refNum = cur.fetchone()
+    return refNum[0]
+
 # Checked
 def createTempCitationTable(dbConnection):
     """
