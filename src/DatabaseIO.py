@@ -41,14 +41,55 @@ def deleteTempCitationTable(dbConnection):
     cur.execute(sql)
     dbConnection.commit()
 
+def readRefFromDBByDict(dbConnection, refItem1):
+    """
+    Read one piece of reference from database with reference dictionary
+    :param dbConnection: the Connection object
+    :param refItem: reference dictionary
+    :return:
+    """
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM ReferencesData WHERE Title=? AND Authors=? AND Year=?",
+                (refItem1['Title'], refItem1['Authors'], refItem1['Year']))
+    rows = cur.fetchall()
+    refItem2 = {}
+    if len(rows) == 1:
+        if len(rows[0]) <= len(DatabaseReferenceStructure):
+            for i in range(len(rows[0])):
+                refItem2[DatabaseReferenceStructure[i]] = rows[0][i]
+    return refItem2
+
 # Checked
 def writeRefToDB(dbConnection, refDict):
-    sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
+    # Check item existance first
+    tempItem = readRefFromDBByDict(dbConnection, refDict)
+    if len(tempItem):
+        tempItem1 = {}
+        tempItem1['Title'] = tempItem['Title']
+        tempItem1['Authors'] = tempItem['Authors']
+        tempItem1['Year'] = tempItem['Year']
+        tempItem2 = {}
+        tempItem2['Title'] = refDict['Title']
+        tempItem2['Authors'] = refDict['Authors']
+        tempItem2['Year'] = refDict['Year']
+        if tempItem1 == tempItem2:
+            pass
+        else:
+            # Not exact the same, wait to check by users
+            sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
               VALUES(?,?,?,?,?,?,?) '''
-    task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
-    cur = dbConnection.cursor()
-    cur.execute(sql, task)
-    dbConnection.commit()
+            task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+            cur = dbConnection.cursor()
+            cur.execute(sql, task)
+            dbConnection.commit()
+    else:
+        # Not exist, add to database
+        sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
+          VALUES(?,?,?,?,?,?,?) '''
+        task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+        cur = dbConnection.cursor()
+        cur.execute(sql, task)
+        dbConnection.commit()
 
 # Checked
 def writeRefsToDB(dbConnection, refDictList):
