@@ -24,7 +24,7 @@ class RefTable(QWidget):
         self.layout = QVBoxLayout()
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0,0,0,0)
-        self.mainTable = QTableWidget(100, 8, self)  # create 100x8 table  rowNum, colNum
+        self.mainTable = QTableWidget(200, 8, self)  # create 100x8 table  rowNum, colNum
         self.mainTable.setHorizontalHeaderLabels(('Year', 'Title', 'Published In', 'Authors', 'Type', 'Added', 'Labels', 'RefID'))
         '''
         header = self.mainTable.horizontalHeader()
