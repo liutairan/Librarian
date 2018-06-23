@@ -248,6 +248,7 @@ class App(QMainWindow):
             if len(importFilePath):
                 bp = BibTeXParser(importFilePath)
                 writeRefsToDB(self.conn, bp.referenceDictList)
+                self.refTableRowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
                 self.reftable_widget.updateRefsTable()
         elif action == "Export":
             selectedRefIDList = self.acquireSelectedRefItems()
