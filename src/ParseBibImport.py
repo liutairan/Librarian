@@ -66,6 +66,8 @@ class BibTeXParser():
                 if fieldKey2 == 'Publisher':
                     fieldKey2 = 'PubIn'
                 refItem[fieldKey2] = fieldValue
+                if fieldKey2 == 'Year':
+                    refItem[fieldKey2] = int(fieldValue)
             if 'PubIn' not in refItem:
                 refItem['PubIn'] = ""
             if 'Labels' not in refItem:
@@ -73,7 +75,6 @@ class BibTeXParser():
             currentTime = datetime.now()
             currentTimeStr = currentTime.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             refItem['AddedTime'] = currentTimeStr
-        #print(refItem)
         return refItem
 
 
