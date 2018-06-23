@@ -1,6 +1,7 @@
 import sys
 import os
 import string
+import math
 from random import *
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
@@ -46,9 +47,9 @@ class App(QMainWindow):
         self.resized.connect(self.respResize)
         #self.setWindowIcon(QIcon('icon.png'))
         self.bundle_dir = os.path.dirname(os.path.abspath(__file__))
+        self.initDBConnection()
         self.initWidgets()
         self.initSignalsSlots()
-        self.initDBConnection()
         self.setFocus()
         #print(self.focusWidget())
 
@@ -177,7 +178,7 @@ class App(QMainWindow):
         self.infotab_widget.appearance = False
 
         # Table of References
-        self.reftable_widget = RefTable(self)
+        self.reftable_widget = RefTable(self, self.refTableRowNum)
         self.reftable_widget.setGeometry(self.width/5, self.toolbarheight, self.width*12/15, self.height)
 
         # Online Search Page
@@ -205,6 +206,7 @@ class App(QMainWindow):
             self.conn = createConnectionToDB(database)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
+        self.refTableRowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
 
     def resizeEvent(self,event):
         self.resized.emit()

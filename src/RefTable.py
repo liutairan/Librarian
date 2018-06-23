@@ -16,15 +16,16 @@ from sqlite3 import Error
 from DatabaseIO import *
 
 class RefTable(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, rowNum=100):
         super(QWidget, self).__init__(parent)
+        self.rowNum = rowNum
         self.initUI()
 
     def initUI(self):
         self.layout = QVBoxLayout()
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0,0,0,0)
-        self.mainTable = QTableWidget(200, 8, self)  # create 100x8 table  rowNum, colNum
+        self.mainTable = QTableWidget(self.rowNum, 8, self)  # create 100x8 table  rowNum, colNum
         self.mainTable.setHorizontalHeaderLabels(('Year', 'Title', 'Published In', 'Authors', 'Type', 'Added', 'Labels', 'RefID'))
         '''
         header = self.mainTable.horizontalHeader()
