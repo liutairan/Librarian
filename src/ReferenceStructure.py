@@ -10,9 +10,18 @@ ArticleFieldSet = set(["author", "title", "journal", "volume", "number",
                        "year", "pages", "month", "note", "abstract"])
 BookFieldSet = set(["author", "title", "volume", "number",
                     "year", "pages", "month", "note"])
+BookletFieldSet = set(["author", "title", "volume", "number",
+                       "year", "pages", "month", "note"])
+ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
+                          "year", "pages", "month", "note", "abstract"])
+InproceedingsFieldSet = set(["author", "title", "conference", "volume", "number",
+                             "year", "pages", "month", "note", "abstract"])
 
-ReferenceStandardStructure = {'article': ArticleFieldSet,
-                              'book': BookFieldSet
+ReferenceStandardStructure = {'article':         ArticleFieldSet,
+                              'book':            BookFieldSet,
+                              'booklet':         BookletFieldSet
+                              'conference':      ConferenceFieldSet,
+                              'inproceedings':   InproceedingsFieldSet
                              }
 
 class Article:
