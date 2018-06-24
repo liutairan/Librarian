@@ -14,14 +14,32 @@ BookletFieldSet = set(["author", "title", "volume", "number",
                        "year", "pages", "month", "note"])
 ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
                           "year", "pages", "month", "note", "abstract"])
+InbookFieldSet = set(["author", "title", "volume", "number",
+                    "year", "pages", "month", "note"])
+Incollection = set(["author"])
 InproceedingsFieldSet = set(["author", "title", "conference", "volume", "number",
                              "year", "pages", "month", "note", "abstract"])
+ManualFieldSet = set(["author"])
+MastersthesisFieldSet = set(["author"])
+MiscFieldSet = set(["author"])
+PhdthesisFieldSet = set(["author"])
+ProceedingsFieldSet = set(["author"])
+TechreportFieldSet = set(["author"])
+UnpublishedFieldSet = set(["author"])
 
 ReferenceStandardStructure = {'article':         ArticleFieldSet,
                               'book':            BookFieldSet,
                               'booklet':         BookletFieldSet
                               'conference':      ConferenceFieldSet,
-                              'inproceedings':   InproceedingsFieldSet
+                              'inbook':          InbookFieldSet,
+                              'inproceedings':   InproceedingsFieldSet,
+                              'manual':          ManualFieldSet,
+                              'mastersthesis':   MastersthesisFieldSet,
+                              'misc':            MiscFieldSet,
+                              'phdthesis':       PhdthesisFieldSet,
+                              'proceedings':     ProceedingsFieldSet,
+                              'techreport':      TechreportFieldSet,
+                              'unpublished':     UnpublishedFieldSet
                              }
 
 class Article:
