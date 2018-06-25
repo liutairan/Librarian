@@ -14,8 +14,8 @@ BookletFieldSet = set(["author", "title", "howpublished", "address",
                        "month", "year", "note"])
 ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
                           "year", "pages", "month", "note", "abstract"])
-InbookFieldSet = set(["author", "title", "volume", "number",
-                    "year", "pages", "month", "note"])
+InbookFieldSet = set(["author", "title", "chapter", "pages", "publisher", "year",
+                      "volume", "series", "address", "edition", "month", "note"])
 Incollection = set(["author"])
 InproceedingsFieldSet = set(["author", "title", "conference", "volume", "number",
                              "year", "pages", "month", "note", "abstract"])
