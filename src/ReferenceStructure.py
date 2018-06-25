@@ -6,75 +6,48 @@ BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
 DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
                               'Year', 'Labels', 'AddedTime']
 
-ArticleFieldSet = set(["author", "title", "journal", "volume", "number",
-                       "year", "pages", "month", "note", "abstract"])
-BookFieldSet = set(["author", "title", "volume", "number",
-                    "year", "pages", "month", "note"])
+# https://verbosus.com/bibtex-style-examples.html
+ArticleFieldSet = set(["author", "title", "journal", "year", "number",
+                        "pages", "month", "note", "volume", "abstract"])
+BookFieldSet = set(["author", "title", "publisher", "year", "volume", "series",
+                    "address", "edition", "month", "note", "isbn"])
+BookletFieldSet = set(["author", "title", "howpublished", "address",
+                       "month", "year", "note"])
+ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
+                          "year", "pages", "month", "note", "abstract"])
+InbookFieldSet = set(["author", "title", "chapter", "pages", "publisher", "year",
+                      "volume", "series", "address", "edition", "month", "note"])
+IncollectionFieldSet = set(["author", "title", "booktitle", "publisher", "year",
+                    "edition", "volume", "series", "chapter", "pages",
+                    "address", "edition", "month", "note"])
+InproceedingsFieldSet = set(["author", "title", "conference", "volume", "number",
+                             "year", "pages", "month", "note", "abstract"])
+ManualFieldSet = set(["author", "title", "organization", "address", "edition",
+                      "month", "year", "note"])
+MastersthesisFieldSet = set(["author", "title", "school", "year", "address",
+                             "month", "note"])
+MiscFieldSet = set(["author", "title", "howpublished", "month", "year", "note"])
+PhdthesisFieldSet = set(["author", "title", "school", "year", "address",
+                         "month", "note"])
+ProceedingsFieldSet = set(["author", "title", "year", "editor", "volume",
+                           "series", "address", "month", "organization",
+                           "publisher", "note"])
+TechreportFieldSet = set(["author", "title", "institution", "year", "number",
+                          "address", "month", "note"])
+UnpublishedFieldSet = set(["author", "title", "note", "month", "year"])
 
-ReferenceStandardStructure = {'article': ArticleFieldSet,
-                              'book': BookFieldSet
+ReferenceStandardStructure = {'article':         ArticleFieldSet,
+                              'book':            BookFieldSet,
+                              'booklet':         BookletFieldSet
+                              'conference':      ConferenceFieldSet,
+                              'inbook':          InbookFieldSet,
+                              'incollection':    IncollectionFieldSet,
+                              'inproceedings':   InproceedingsFieldSet,
+                              'manual':          ManualFieldSet,
+                              'mastersthesis':   MastersthesisFieldSet,
+                              'misc':            MiscFieldSet,
+                              'phdthesis':       PhdthesisFieldSet,
+                              'proceedings':     ProceedingsFieldSet,
+                              'techreport':      TechreportFieldSet,
+                              'unpublished':     UnpublishedFieldSet
                              }
-
-class Article:
-    def __init__(self, author="", title="", journal="", volume="", number="", year="", pages="", month="", note="", abstract=""):
-        self.data = {"author"    :author,
-                     "title"     :title,
-                     "journal"   :journal,
-                     "volume"    :volume,
-                     "number"    :number,
-                     "year"      :year,
-                     "pages"     :pages,
-                     "month"     :month,
-                     "note"      :note,
-                     "abstract"  :abstract}
-
-class Book:
-    def __init__(self):
-        self.data = None
-class Booklet:
-    def __init__(self):
-        self.data = None
-
-class Conference:
-    def __init__(self):
-        self.data = None
-
-class Inbook:
-    def __init__(self):
-        self.data = None
-
-class Incollection:
-    def __init__(self):
-        self.data = None
-
-class Inproceedings:
-    def __init__(self):
-        self.data = None
-
-class Manual:
-    def __init__(self):
-        self.data = None
-
-class Mastersthesis:
-    def __init__(self):
-        self.data = None
-
-class Misc:
-    def __init__(self):
-        self.data = None
-
-class Phdthesis:
-    def __init__(self):
-        self.data = None
-
-class Proceedings:
-    def __init__(self):
-        self.data = None
-
-class Techreport:
-    def __init__(self):
-        self.data = None
-
-class Unpublished:
-    def __init__(self):
-        self.data = None
