@@ -6,12 +6,12 @@ BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
 DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
                               'Year', 'Labels', 'AddedTime']
 
-ArticleFieldSet = set(["author", "title", "journal", "volume", "number",
-                       "year", "pages", "month", "note", "abstract"])
-BookFieldSet = set(["author", "title", "volume", "number",
-                    "year", "pages", "month", "note"])
-BookletFieldSet = set(["author", "title", "volume", "number",
-                       "year", "pages", "month", "note"])
+ArticleFieldSet = set(["author", "title", "journal", "year", "number",
+                        "pages", "month", "note", "volume", "abstract"])
+BookFieldSet = set(["author", "title", "publisher", "year", "volume", "series",
+                    "address", "edition", "month", "note", "isbn"])
+BookletFieldSet = set(["author", "title", "howpublished", "address",
+                       "month", "year", "note"])
 ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
                           "year", "pages", "month", "note", "abstract"])
 InbookFieldSet = set(["author", "title", "volume", "number",
