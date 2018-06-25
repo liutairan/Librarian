@@ -38,7 +38,7 @@ UnpublishedFieldSet = set(["author", "title", "note", "month", "year"])
 
 ReferenceStandardStructure = {'article':         ArticleFieldSet,
                               'book':            BookFieldSet,
-                              'booklet':         BookletFieldSet
+                              'booklet':         BookletFieldSet,
                               'conference':      ConferenceFieldSet,
                               'inbook':          InbookFieldSet,
                               'incollection':    IncollectionFieldSet,
