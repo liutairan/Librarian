@@ -8,6 +8,7 @@ DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
 
 # Some fields will only be used for certain type of references,
 #    some will be used differently for different types.
+# May consider use several database tables or json type in the future.
 
 # ID: Reference ID in database
 # Title: Title of reference item
@@ -18,16 +19,33 @@ DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
 # Year: year published.
 # Label: user added labels.
 # AddedTime: reference item added time.
+# Note: user note
+# Publisher: publisher.
+
+# Volume: Volume of journal article, or book.
 # Number: issue number for journal articles or used for other cases.
 # Pages: pages of article or part of a book.
+# Month: month of journal.
+# Abstract: abstract of papers.
 
+# Booktitle: unknown.
+# Chapter:
+# Edition:
+# Isbn:
+# Issn:
+
+# Series:
+# Address:
+# Organization:
+# Other1:
+# Other2:
 
 ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
-                              'Year', 'Label', 'AddedTime', 'Number', 'Pages']
+                              'Year', 'Label', 'AddedTime', 'Note', 'Publisher'
+                              'Volume', 'Number', 'Pages', 'Month', 'Abstract',
+                              'Booktitle', 'Chapter', 'Edition', 'Isbn', 'Issn',
+                              'Series', 'Address', 'Organization', 'Other1', 'Other2']
 
-                   "month", "note", "abstract", "volume", "isbn", "issn",
-                   "series", "edition", "address", "publisher", "booktitle",
-                   "chapter", "conference", "howpublished", "organization"
 
 
 AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
