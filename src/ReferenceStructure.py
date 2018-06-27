@@ -6,6 +6,34 @@ BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
 DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
                               'Year', 'Labels', 'AddedTime']
 
+# Some fields will only be used for certain type of references,
+#    some will be used differently for different types.
+
+# ID: Reference ID in database
+# Title: Title of reference item
+# Author: Authors of the reference item
+# Type: BibTexTypes, article, book, misc, ...
+# PubIn: name of journal, conference, or howpublished
+
+# Year: year published.
+# Label: user added labels.
+# AddedTime: reference item added time.
+# Number: issue number for journal articles or used for other cases.
+# Pages: pages of article or part of a book.
+
+
+ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
+                              'Year', 'Label', 'AddedTime', 'Number', 'Pages']
+
+                   "month", "note", "abstract", "volume", "isbn", "issn",
+                   "series", "edition", "address", "publisher", "booktitle",
+                   "chapter", "conference", "howpublished", "organization"
+
+
+AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
+                   "month", "note", "abstract", "volume", "isbn", "issn",
+                   "series", "edition", "address", "publisher", "booktitle",
+                   "chapter", "conference", "howpublished", "organization"])
 # https://verbosus.com/bibtex-style-examples.html
 ArticleFieldSet = set(["author", "title", "journal", "year", "number",
                         "pages", "month", "note", "volume", "abstract"])
