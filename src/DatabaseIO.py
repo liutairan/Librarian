@@ -3,8 +3,76 @@ from sqlite3 import Error
 
 from ReferenceStructure import *
 
+# Checked
 def createDB(db_path):
-    pass
+    conn = createConnectionToDB(db_path)
+    if conn is not None:
+        # create projects table
+        initTables(conn)
+    else:
+        print("Error! cannot create the database connection.")
+
+def initTables(dbConnection):
+    # Create Article table
+    sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Title` TEXT NOT NULL,
+                                        `Author` TEXT,
+                                        `Type` TEXT NOT NULL,
+                                        `Journal` TEXT,
+                                        `Year` INTEGER NOT NULL,
+                                        `Labels` TEXT,
+                                        `AddedTime` TEXT NOT NULL
+                                    ); """
+    createTable(dbConnection, sql_create_article_table)
+    # Create Conference table
+
+    # Create Citation table
+    sql_create_citation_table = """ CREATE TABLE IF NOT EXISTS "Citation" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Self` TEXT,
+                                        `Cited` TEXT,
+                                        `CitedBy` TEXT
+                                    ); """
+    createTable(dbConnection, sql_create_citation_table)
+    # Create Labels table
+    sql_create_labels_table = """ CREATE TABLE IF NOT EXISTS "Labels" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Name` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_labels_table)
+    # Create PubIn table
+    sql_create_pubin_table = """ CREATE TABLE IF NOT EXISTS "PubIn" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Name` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_pubin_table)
+    # Create Trash table
+    sql_create_trash_table = """ CREATE TABLE IF NOT EXISTS "Trash" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Title` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_trash_table)
+    # Create Years table
+    sql_create_years_table = """ CREATE TABLE IF NOT EXISTS "Years" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Year` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_years_table)
+
+# Checked
+def createTable(dbConnection, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = dbConnection.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
 
 # Checked
 def createConnectionToDB(db_file):
@@ -233,4 +301,4 @@ def readTempCitationsFromDB(dbConnection):
 
 
 if __name__ == "__main__":
-    pass
+    createDB("Test2.db")
