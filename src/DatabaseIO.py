@@ -14,6 +14,17 @@ def createDB(db_path):
 
 def initTables(dbConnection):
     # Create Article table
+    sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Title` TEXT NOT NULL,
+                                        `Author` TEXT,
+                                        `Type` TEXT NOT NULL,
+                                        `Journal` TEXT,
+                                        `Year` INTEGER NOT NULL,
+                                        `Labels` TEXT,
+                                        `AddedTime` TEXT NOT NULL
+                                    ); """
+    createTable(dbConnection, sql_create_article_table)
     # Create Conference table
 
     # Create Citation table
@@ -25,17 +36,27 @@ def initTables(dbConnection):
                                     ); """
     createTable(dbConnection, sql_create_citation_table)
     # Create Labels table
+    sql_create_labels_table = """ CREATE TABLE IF NOT EXISTS "Labels" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Name` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_labels_table)
     # Create PubIn table
+    sql_create_pubin_table = """ CREATE TABLE IF NOT EXISTS "PubIn" (
+                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                                        `Name` TEXT NOT NULL UNIQUE
+                                    ); """
+    createTable(dbConnection, sql_create_pubin_table)
     # Create Trash table
     sql_create_trash_table = """ CREATE TABLE IF NOT EXISTS "Trash" (
                                         `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
-                                        `Title` TEXT NOT NULL
+                                        `Title` TEXT NOT NULL UNIQUE
                                     ); """
     createTable(dbConnection, sql_create_trash_table)
     # Create Years table
     sql_create_years_table = """ CREATE TABLE IF NOT EXISTS "Years" (
                                         `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
-                                        `Year` TEXT NOT NULL
+                                        `Year` TEXT NOT NULL UNIQUE
                                     ); """
     createTable(dbConnection, sql_create_years_table)
 
