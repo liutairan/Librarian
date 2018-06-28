@@ -37,14 +37,21 @@ DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
 # Series:
 # Address:
 # Organization:
+# Doi:
+# Keywords:
+
 # Other1:
 # Other2:
+# Other3:
+# Other4:
+# Other5:
 
 ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
                               'Year', 'Label', 'AddedTime', 'Note', 'Publisher'
                               'Volume', 'Number', 'Pages', 'Month', 'Abstract',
                               'Booktitle', 'Chapter', 'Edition', 'Isbn', 'Issn',
-                              'Series', 'Address', 'Organization', 'Other1', 'Other2']
+                              'Series', 'Address', 'Organization', 'Doi', 'Keywords',
+                              'Other1', 'Other2', 'Other3', 'Other4', 'Other5']
 
 
 

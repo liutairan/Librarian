@@ -66,7 +66,9 @@ class BibTeXParser():
                     fieldValue = fieldValue.replace("}","")
                 if fieldKey2 == 'Author':
                     fieldKey2 = 'Authors'
-                if fieldKey2 == 'Publisher':
+                if fieldKey2 == 'Journal':
+                    fieldKey2 = 'PubIn'
+                if fieldKey2 == 'Booktitle' and refItem['Type'] == 'Inproceedings':
                     fieldKey2 = 'PubIn'
                 refItem[fieldKey2] = fieldValue
                 if fieldKey2 == 'Year':
