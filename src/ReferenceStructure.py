@@ -53,44 +53,98 @@ ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
                               'Series', 'Address', 'Organization', 'Doi', 'Keywords',
                               'Other1', 'Other2', 'Other3', 'Other4', 'Other5']
 
+DB_BaseFields = ['ID', 'Label', 'AddedTime']
+DB_ArticleFields = []
+DB_BookFields = []
+DB_BookletFields = []
+DB_ConferenceFields = []
+DB_InbookFields = []
+DB_IncollectionFields = []
+DB_InproceedingsFields = []
+DB_ManualFields = []
+DB_MastersthesisFields = []
+DB_MiscFields = []
+DB_PhdthesisFields = []
+DB_ProceedingsFields = []
+DB_TechreportFields = []
+DB_UnpublishedFields = []
+DB_ExtendFields = ['E1', 'E2', 'E3', 'E4', 'E5']
+
+DatabaseStandardStructure = {'Article':         DB_ArticleFields,
+                             'Book':            DB_BookFields,
+                             'Booklet':         DB_BookletFields,
+                             'Conference':      DB_ConferenceFields,
+                             'Inbook':          DB_InbookFields,
+                             'Incollection':    DB_IncollectionFields,
+                             'Inproceedings':   DB_InproceedingsFields,
+                             'Manual':          DB_ManualFields,
+                             'Mastersthesis':   DB_MastersthesisFields,
+                             'Misc':            DB_MiscFields,
+                             'Phdthesis':       DB_PhdthesisFields,
+                             'Proceedings':     DB_ProceedingsFields,
+                             'Techreport':      DB_TechreportFields,
+                             'Unpublished':     DB_UnpublishedFields
+                             }
 
 
 AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
                    "month", "note", "abstract", "volume", "isbn", "issn",
                    "series", "edition", "address", "publisher", "booktitle",
                    "chapter", "conference", "howpublished", "organization"])
+
 # https://verbosus.com/bibtex-style-examples.html
 # http://web.mit.edu/rsi/www/pdfs/bibtex-format.pdf
 # http://newton.ex.ac.uk/tex/pack/bibtex/btxdoc/node6.html
 # http://newton.ex.ac.uk/tex/pack/bibtex/btxdoc/node7.html
-ArticleFieldSet = set(["author", "title", "journal", "year", "number",
-                        "pages", "month", "note", "volume", "abstract"])
-BookFieldSet = set(["author", "title", "publisher", "year", "volume", "series",
-                    "address", "edition", "month", "note", "isbn"])
-BookletFieldSet = set(["author", "title", "howpublished", "address",
-                       "month", "year", "note"])
-ConferenceFieldSet = set(["author", "title", "conference", "volume", "number",
-                          "year", "pages", "month", "note", "abstract"])
-InbookFieldSet = set(["author", "title", "chapter", "pages", "publisher", "year",
-                      "volume", "series", "address", "edition", "month", "note"])
+
+# Example: XXXFieldSet = set([ #Required Fields
+#                              #Optional Fields
+#                              #Controvertible Fields ])
+
+ArticleFieldSet = set(["author", "title", "journal", "year",
+                       "volume", "number", "pages", "month", "note",
+                       "abstract"])
+BookFieldSet = set(["author", "title", "publisher", "year",
+                    "volume", "number", "series", "address", "edition", "month", "note",
+                    "isbn"])
+BookletFieldSet = set(["title",
+                       "author", "howpublished", "address", "month", "year", "note"])
+ConferenceFieldSet = set(["author", "title", "booktitle", "year",
+                          "editor", "volume", "number", "series", "pages", "address", "month", "organization", "publisher", "note",
+                          "conference", "abstract"])
+
+InbookFieldSet = set(["author", "editor", "title", "chapter", "pages", "publisher", "year",
+                      "volume", "number", "series", "type", "address", "edition", "month", "note"])
+
 IncollectionFieldSet = set(["author", "title", "booktitle", "publisher", "year",
-                    "edition", "volume", "series", "chapter", "pages",
-                    "address", "edition", "month", "note"])
-InproceedingsFieldSet = set(["author", "title", "conference", "volume", "number",
-                             "year", "pages", "month", "note", "abstract"])
-ManualFieldSet = set(["author", "title", "organization", "address", "edition",
+                            "editor", "volume", "number", "series", "type", "chapter", "pages", "address", "edition", "month", "note"])
+
+InproceedingsFieldSet = set(["author", "title", "booktitle", "year",
+                             "editor", "volume", "number", "series", "pages", "address", "month", "organization", "publisher", "note",
+                             "conference", "abstract"])
+
+ManualFieldSet = set(["title",
+                      "author", "organization", "address", "edition",
                       "month", "year", "note"])
-MastersthesisFieldSet = set(["author", "title", "school", "year", "address",
-                             "month", "note"])
-MiscFieldSet = set(["author", "title", "howpublished", "month", "year", "note"])
-PhdthesisFieldSet = set(["author", "title", "school", "year", "address",
-                         "month", "note"])
-ProceedingsFieldSet = set(["author", "title", "year", "editor", "volume",
-                           "series", "address", "month", "organization",
-                           "publisher", "note"])
-TechreportFieldSet = set(["author", "title", "institution", "year", "number",
-                          "address", "month", "note"])
-UnpublishedFieldSet = set(["author", "title", "note", "month", "year"])
+
+MastersthesisFieldSet = set(["author", "title", "school", "year",
+                             "type", "address", "month", "note"])
+
+MiscFieldSet = set([
+                    "author", "title", "howpublished", "month", "year", "note"])
+
+PhdthesisFieldSet = set(["author", "title", "school", "year",
+                         "address", "month", "keywords", "note"])
+
+ProceedingsFieldSet = set(["title", "year",
+                           "editor", "volume", "number", "series", "address", "month", "organization", "publisher", "note",
+                           "author"])
+
+TechreportFieldSet = set(["author", "title", "institution", "year",
+                          "type", "number", "address", "month", "note"])
+
+UnpublishedFieldSet = set(["author", "title", "note",
+                           "month", "year"])
 
 ReferenceStandardStructure = {'article':         ArticleFieldSet,
                               'book':            BookFieldSet,
