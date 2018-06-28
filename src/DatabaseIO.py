@@ -14,18 +14,36 @@ def createDB(db_path):
 
 def initTables(dbConnection):
     # Create Article table
-    sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
-                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
-                                        `Title` TEXT NOT NULL,
-                                        `Author` TEXT,
-                                        `Type` TEXT NOT NULL,
-                                        `Journal` TEXT,
-                                        `Year` INTEGER NOT NULL,
-                                        `Labels` TEXT,
-                                        `AddedTime` TEXT NOT NULL
-                                    ); """
-    createTable(dbConnection, sql_create_article_table)
-    # Create Conference table
+    # sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
+    #                                     `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+    #                                     `Title` TEXT NOT NULL,
+    #                                     `Author` TEXT,
+    #                                     `Type` TEXT NOT NULL,
+    #                                     `Journal` TEXT,
+    #                                     `Year` INTEGER NOT NULL,
+    #                                     `Labels` TEXT,
+    #                                     `AddedTime` TEXT NOT NULL
+    #                                 ); """
+    # print(sql_create_article_table)
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        sql_head = " CREATE TABLE IF NOT EXISTS " + "\"" + tablename + "\" ("
+        DB_BaseStr = "`ID` INTEGER NOT NULL PRIMARY KEY UNIQUE," \
+                   + "`Label` TEXT," \
+                   + "`AddedTime` TEXT NOT NULL," \
+                   + "`Citekey` TEXT,"
+        DB_FieldsStrList = []
+        DB_ExtendFieldsStrList = []
+        for field in DatabaseStandardStructure[tablename]:
+            tempStr = "`" + field + "` TEXT"
+            DB_FieldsStrList.append(tempStr)
+        for field in DB_ExtendFields:
+            tempStr = "`" + field + "` TEXT"
+            DB_ExtendFieldsStrList.append(tempStr)
+        DB_FieldsStr = ",".join(DB_FieldsStrList + DB_ExtendFieldsStrList)
+        sql_tail = "); "
+        sql_create_table_expr =  sql_head + DB_BaseStr + DB_FieldsStr + sql_tail
+        createTable(dbConnection, sql_create_table_expr)
 
     # Create Citation table
     sql_create_citation_table = """ CREATE TABLE IF NOT EXISTS "Citation" (
