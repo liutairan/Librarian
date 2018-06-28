@@ -1,14 +1,14 @@
+# https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
 BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
                    'incollection', 'inproceedings', 'manual', 'mastersthesis',
                    'misc', 'phdthesis', 'proceedings', 'techreport',
                    'unpublished'])
 
-DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
-                              'Year', 'Labels', 'AddedTime']
-
 # Some fields will only be used for certain type of references,
 #    some will be used differently for different types.
 # May consider use several database tables or json type in the future.
+DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
+                              'Year', 'Labels', 'AddedTime']
 
 # ID: Reference ID in database
 # Title: Title of reference item
@@ -60,6 +60,9 @@ AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
                    "series", "edition", "address", "publisher", "booktitle",
                    "chapter", "conference", "howpublished", "organization"])
 # https://verbosus.com/bibtex-style-examples.html
+# http://web.mit.edu/rsi/www/pdfs/bibtex-format.pdf
+# http://newton.ex.ac.uk/tex/pack/bibtex/btxdoc/node6.html
+# http://newton.ex.ac.uk/tex/pack/bibtex/btxdoc/node7.html
 ArticleFieldSet = set(["author", "title", "journal", "year", "number",
                         "pages", "month", "note", "volume", "abstract"])
 BookFieldSet = set(["author", "title", "publisher", "year", "volume", "series",
