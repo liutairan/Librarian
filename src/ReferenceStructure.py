@@ -6,6 +6,59 @@ BibTeXTypes = set(['article', 'book', 'booklet', 'conference', 'inbook',
 DatabaseReferenceStructure = ['ID', 'Title', 'Authors', 'Type', 'PubIn',
                               'Year', 'Labels', 'AddedTime']
 
+# Some fields will only be used for certain type of references,
+#    some will be used differently for different types.
+# May consider use several database tables or json type in the future.
+
+# ID: Reference ID in database
+# Title: Title of reference item
+# Author: Authors of the reference item
+# Type: BibTexTypes, article, book, misc, ...
+# PubIn: name of journal, conference, or howpublished
+
+# Year: year published.
+# Label: user added labels.
+# AddedTime: reference item added time.
+# Note: user note
+# Publisher: publisher.
+
+# Volume: Volume of journal article, or book.
+# Number: issue number for journal articles or used for other cases.
+# Pages: pages of article or part of a book.
+# Month: month of journal.
+# Abstract: abstract of papers.
+
+# Booktitle: unknown.
+# Chapter:
+# Edition:
+# Isbn:
+# Issn:
+
+# Series:
+# Address:
+# Organization:
+# Doi:
+# Keywords:
+
+# Other1:
+# Other2:
+# Other3:
+# Other4:
+# Other5:
+
+ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
+                              'Year', 'Label', 'AddedTime', 'Note', 'Publisher'
+                              'Volume', 'Number', 'Pages', 'Month', 'Abstract',
+                              'Booktitle', 'Chapter', 'Edition', 'Isbn', 'Issn',
+                              'Series', 'Address', 'Organization', 'Doi', 'Keywords',
+                              'Other1', 'Other2', 'Other3', 'Other4', 'Other5']
+
+
+
+AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
+                   "month", "note", "abstract", "volume", "isbn", "issn",
+                   "series", "edition", "address", "publisher", "booktitle",
+                   "chapter", "conference", "howpublished", "organization"])
 # https://verbosus.com/bibtex-style-examples.html
 ArticleFieldSet = set(["author", "title", "journal", "year", "number",
                         "pages", "month", "note", "volume", "abstract"])
@@ -38,7 +91,7 @@ UnpublishedFieldSet = set(["author", "title", "note", "month", "year"])
 
 ReferenceStandardStructure = {'article':         ArticleFieldSet,
                               'book':            BookFieldSet,
-                              'booklet':         BookletFieldSet
+                              'booklet':         BookletFieldSet,
                               'conference':      ConferenceFieldSet,
                               'inbook':          InbookFieldSet,
                               'incollection':    IncollectionFieldSet,
