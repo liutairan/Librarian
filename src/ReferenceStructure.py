@@ -53,21 +53,55 @@ ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
                               'Series', 'Address', 'Organization', 'Doi', 'Keywords',
                               'Other1', 'Other2', 'Other3', 'Other4', 'Other5']
 
-DB_BaseFields = ['ID', 'Label', 'AddedTime']
-DB_ArticleFields = []
-DB_BookFields = []
-DB_BookletFields = []
-DB_ConferenceFields = []
-DB_InbookFields = []
-DB_IncollectionFields = []
-DB_InproceedingsFields = []
-DB_ManualFields = []
-DB_MastersthesisFields = []
-DB_MiscFields = []
-DB_PhdthesisFields = []
-DB_ProceedingsFields = []
-DB_TechreportFields = []
-DB_UnpublishedFields = []
+DB_BaseFields = ['ID', 'Label', 'AddedTime', 'Citekey']
+
+DB_ArticleFields = ["author", "title", "journal", "year",
+                    "volume", "number", "pages", "month", "note",
+                    "abstract"]
+
+DB_BookFields = ["author", "title", "publisher", "year",
+                 "volume", "number", "series", "address", "edition", "month", "note",
+                 "isbn"]
+
+DB_BookletFields = ["title",
+                    "author", "howpublished", "address", "month", "year", "note"]
+
+DB_ConferenceFields = ["author", "title", "booktitle", "year",
+                       "editor", "volume", "number", "series", "pages", "address", "month", "organization", "publisher", "note",
+                       "conference", "abstract"]
+
+DB_InbookFields = ["author", "editor", "title", "chapter", "pages", "publisher", "year",
+                   "volume", "number", "series", "type", "address", "edition", "month", "note"]
+
+DB_IncollectionFields = ["author", "title", "booktitle", "publisher", "year",
+                         "editor", "volume", "number", "series", "type", "chapter", "pages", "address", "edition", "month", "note"]
+
+DB_InproceedingsFields = ["author", "title", "booktitle", "year",
+                          "editor", "volume", "number", "series", "pages", "address", "month", "organization", "publisher", "note",
+                          "conference", "abstract"]
+
+DB_ManualFields = ["title",
+                   "author", "organization", "address", "edition",
+                   "month", "year", "note"]
+
+DB_MastersthesisFields = ["author", "title", "school", "year",
+                          "type", "address", "month", "note"]
+
+DB_MiscFields = ["author", "title", "howpublished", "month", "year", "note"]
+
+DB_PhdthesisFields = ["author", "title", "school", "year",
+                      "address", "month", "keywords", "note"]
+
+DB_ProceedingsFields = ["title", "year",
+                        "editor", "volume", "number", "series", "address", "month", "organization", "publisher", "note",
+                        "author"]
+
+DB_TechreportFields = ["author", "title", "institution", "year",
+                       "type", "number", "address", "month", "note"]
+
+DB_UnpublishedFields = ["author", "title", "note",
+                        "month", "year"]
+
 DB_ExtendFields = ['E1', 'E2', 'E3', 'E4', 'E5']
 
 DatabaseStandardStructure = {'Article':         DB_ArticleFields,
@@ -104,11 +138,14 @@ AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
 ArticleFieldSet = set(["author", "title", "journal", "year",
                        "volume", "number", "pages", "month", "note",
                        "abstract"])
+
 BookFieldSet = set(["author", "title", "publisher", "year",
                     "volume", "number", "series", "address", "edition", "month", "note",
                     "isbn"])
+
 BookletFieldSet = set(["title",
                        "author", "howpublished", "address", "month", "year", "note"])
+
 ConferenceFieldSet = set(["author", "title", "booktitle", "year",
                           "editor", "volume", "number", "series", "pages", "address", "month", "organization", "publisher", "note",
                           "conference", "abstract"])
