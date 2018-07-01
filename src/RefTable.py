@@ -81,7 +81,8 @@ class RefTable(QWidget):
             #print("Descending")
 
     def getRefsData(self):
-        refItemList = readAllRefsFromDB(self.conn)
+        refItemList = readAllRefsInDB(self.conn)
+        #refItemList = readAllRefsFromDB(self.conn)
         return refItemList
 
     def setRefsTable(self, refs):

@@ -202,11 +202,13 @@ class App(QMainWindow):
     def initDBConnection(self):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
+        if not os.path.exists(database):
+            createDB(database)
         try:
             self.conn = createConnectionToDB(database)
+            self.refTableRowNum = int(math.floor(countAllRefsInDB(self.conn)/100.0)*100+100)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-        self.refTableRowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
 
     def resizeEvent(self,event):
         self.resized.emit()
