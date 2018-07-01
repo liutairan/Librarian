@@ -231,9 +231,11 @@ def readAllRefsFromDB(dbConnection):
     return refItemList
 
 def readAllRefsInDB(dbConnection):
+    allRefItemList = []
     for type in BibTeXTypes:
         tablename = type.capitalize()
-        readAllRefsInTable(dbConnection, tablename)
+        tempList = readAllRefsInTable(dbConnection, tablename)
+        allRefItemList = allRefItemList + tempList
 
 def readAllRefsInTable(dbConnection, tablename):
     sql = "SELECT * FROM " + tablename
