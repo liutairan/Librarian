@@ -265,8 +265,21 @@ def readAllRefsInTable(dbConnection, tablename):
         for row in rows:
             if len(row) <= len(tempDBFieldsList):
                 refItem = {}
+                refItem['Type'] = tablename
                 for i in range(len(row)):
-                    refItem[tempDBFieldsList[i]] = row[i]
+                    tempFieldName = tempDBFieldsList[i].capitalize()
+                    if tempFieldName == 'Journal':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Addedtime':
+                        tempFieldName = 'AddedTime'
+                    elif tempFieldName == 'Label':
+                        tempFieldName = 'Labels'
+                    elif tempFieldName == 'Id':
+                        tempFieldName = 'ID'
+                    elif tempFieldName == 'Author':
+                        tempFieldName = 'Authors'
+                    refItem[tempFieldName] = row[i]
+
                 refItemList.append(refItem)
     return refItemList
 
