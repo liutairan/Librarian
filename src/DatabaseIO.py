@@ -29,6 +29,7 @@ def initTables(dbConnection):
         tablename = type.capitalize()
         sql_head = " CREATE TABLE IF NOT EXISTS " + "\"" + tablename + "\" ("
         DB_BaseStr = "`ID` INTEGER NOT NULL PRIMARY KEY UNIQUE," \
+                   + "`RefAbsID` INTEGER NOT NULL UNIQUE," \
                    + "`Label` TEXT," \
                    + "`AddedTime` TEXT NOT NULL," \
                    + "`Citekey` TEXT,"
@@ -207,6 +208,34 @@ def writeRefsToDB(dbConnection, refDictList):
         for refDict in refDictList:
             writeRefToDB(dbConnection, refDict)
 
+def readRefInDBTableByID(dbConnection, refType, refAbsID):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM " + refType +" WHERE RefAbsID=?", (refAbsID,))
+    rows = cur.fetchall()
+    refItem = {}
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[refType] + DB_ExtendFields
+    row = rows[0]
+    if len(row) <= len(tempDBFieldsList):
+        refItem['Type'] = refType
+        for i in range(len(row)):
+            tempFieldName = tempDBFieldsList[i].capitalize()
+            if tempFieldName == 'Journal':
+                tempFieldName = 'PubIn'
+            elif tempFieldName == 'Addedtime':
+                tempFieldName = 'AddedTime'
+            elif tempFieldName == 'Label':
+                tempFieldName = 'Labels'
+            elif tempFieldName == 'Id':
+                tempFieldName = 'ID'
+            elif tempFieldName == 'Refabsid':
+                tempFieldName = 'RefAbsID'
+            elif tempFieldName == 'Author':
+                tempFieldName = 'Authors'
+            refItem[tempFieldName] = row[i]
+            if row[i] is None:
+                refItem[tempFieldName] = ""
+    return refItem
+
 # Checked
 def readRefFromDBByID(dbConnection, refAbsID):
     """
@@ -276,6 +305,8 @@ def readAllRefsInTable(dbConnection, tablename):
                         tempFieldName = 'Labels'
                     elif tempFieldName == 'Id':
                         tempFieldName = 'ID'
+                    elif tempFieldName == 'Refabsid':
+                        tempFieldName = 'RefAbsID'
                     elif tempFieldName == 'Author':
                         tempFieldName = 'Authors'
                     refItem[tempFieldName] = row[i]
