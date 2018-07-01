@@ -120,6 +120,21 @@ DatabaseStandardStructure = {'Article':         DB_ArticleFields,
                              'Unpublished':     DB_UnpublishedFields
                              }
 
+DB_TypeCode ={'Article':         10,
+              'Book':            11,
+              'Booklet':         12,
+              'Conference':      13,
+              'Inbook':          14,
+              'Incollection':    15,
+              'Inproceedings':   16,
+              'Manual':          17,
+              'Mastersthesis':   18,
+              'Misc':            19,
+              'Phdthesis':       20,
+              'Proceedings':     21,
+              'Techreport':      22,
+              'Unpublished':     23
+             }
 
 AllFieldSet = set(["author", "title", "journal", "year", "number", "pages",
                    "month", "note", "abstract", "volume", "isbn", "issn",
