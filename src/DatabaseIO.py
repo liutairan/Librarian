@@ -106,6 +106,22 @@ def createConnectionToDB(db_file):
         print(e)
         return None
 
+
+def countAllRefsInDB(dbConnection):
+    allRefNum = 0
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempNum = countRefsInTable(dbConnection, tablename)
+        allRefNum = allRefNum + tempNum
+    return allRefNum
+
+def countRefsInTable(dbConnection, tablename):
+    sql = "SELECT Count(*) FROM " + tablename
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    refNum = cur.fetchone()
+    return refNum[0]
+
 # Checked
 def countRefs(dbConnection):
     sql = "SELECT Count(*) FROM ReferencesData"
@@ -236,6 +252,7 @@ def readAllRefsInDB(dbConnection):
         tablename = type.capitalize()
         tempList = readAllRefsInTable(dbConnection, tablename)
         allRefItemList = allRefItemList + tempList
+    return allRefItemList
 
 def readAllRefsInTable(dbConnection, tablename):
     sql = "SELECT * FROM " + tablename
