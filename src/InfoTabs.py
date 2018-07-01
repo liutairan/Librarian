@@ -66,7 +66,7 @@ class InfoTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
         self.appearance = True
-
+        self.refType = None
         self.refAbsID = None
 
     def initDBConnection(self):
@@ -77,9 +77,11 @@ class InfoTabs(QWidget):
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
-    def updateInfo(self, refAbsID):
+    def updateInfo(self, refType, refAbsID):
+        self.refType = refType
         self.refAbsID = refAbsID
-        refItem = readRefFromDBByID(self.conn, refAbsID)
+        refItem = readRefInDBTableByID(self.conn, refType, refAbsID)
+        # refItem = readRefFromDBByID(self.conn, refAbsID)
         if len(refItem):
             textStringList = ["Title: "        + refItem['Title'],
                               "Authors: "      + refItem['Authors'],
@@ -91,7 +93,7 @@ class InfoTabs(QWidget):
                               "Pages: "        + " ",
                               "Labels: "       + refItem['Labels'],
                               "Added Time:"    + refItem['AddedTime'],
-                              "Reference ID: " + str(refItem['ID']).zfill(10)]
+                              "Reference ID: " + str(refItem['RefAbsID']).zfill(10)]
             textString = "\n\n".join(textStringList)
             self.infoLabel.setText(textString)
 

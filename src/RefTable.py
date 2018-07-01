@@ -98,7 +98,7 @@ class RefTable(QWidget):
             self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd]['Type'])) # Type
             self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd]['AddedTime'])) # Add Date, change to real field later
             self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd]['Labels'])) # Labels
-            self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd]['ID']).zfill(10))) # RefAbsID
+            self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd]['RefAbsID']).zfill(10))) # RefAbsID
 
         # Enable sorting again.
         self.mainTable.setSortingEnabled(True)
