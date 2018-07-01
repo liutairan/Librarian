@@ -316,7 +316,8 @@ class App(QMainWindow):
             if self.refTableRowEmpty(currRow) is False:  # Not empty, show
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
                 refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
-                self.infotab_widget.updateInfo(refAbsoluteID)
+                refType = self.reftable_widget.mainTable.item(currRow, 4).text()
+                self.infotab_widget.updateInfo(refType, refAbsoluteID)
                 self.infotab_widget.show()
             elif self.refTableRowEmpty(currRow) is True: # Empty, hide
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
@@ -331,7 +332,8 @@ class App(QMainWindow):
             if self.refTableRowEmpty(currRow) is False:  # Not empty, show
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
                 refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
-                self.infotab_widget.updateInfo(refAbsoluteID)
+                refType = self.reftable_widget.mainTable.item(currRow, 4).text()
+                self.infotab_widget.updateInfo(refType, refAbsoluteID)
                 self.infotab_widget.show()
             elif self.refTableRowEmpty(currRow) is True: # Empty, hide
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
