@@ -236,7 +236,20 @@ def readAllRefsInDB(dbConnection):
         readAllRefsInTable(dbConnection, tablename)
 
 def readAllRefsInTable(dbConnection, tablename):
-    pass
+    sql = "SELECT * FROM " + tablename
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    refItemList = []
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(rows):
+        for row in rows:
+            if len(row) <= len(tempDBFieldsList):
+                refItem = {}
+                for i in range(len(row)):
+                    refItem[tempDBFieldsList[i]] = row[i]
+                refItemList.append(refItem)
+    return refItemList
 
 def updateRefToDBByID(dbConnection, refAbsID, value):
     sql = ''' UPDATE ReferencesData
