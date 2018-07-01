@@ -91,6 +91,7 @@ class RefTable(QWidget):
         # Must disable sorting table first, otherwise error will occur
         self.mainTable.setSortingEnabled(False)
         for rowInd in range(len(refs)):
+            print(refs[rowInd])
             self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd]['Year']))) # Year
             self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd]['Title'])) # Title
             self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd]['PubIn'])) # PubIn

@@ -217,9 +217,13 @@ def readRefInDBTableByID(dbConnection, refType, refAbsID):
     row = rows[0]
     if len(row) <= len(tempDBFieldsList):
         refItem['Type'] = refType
+        if refItem['Type'] == 'Book':
+            refItem['PubIn'] = ""
         for i in range(len(row)):
             tempFieldName = tempDBFieldsList[i].capitalize()
             if tempFieldName == 'Journal':
+                tempFieldName = 'PubIn'
+            elif tempFieldName == 'Booktitle':
                 tempFieldName = 'PubIn'
             elif tempFieldName == 'Addedtime':
                 tempFieldName = 'AddedTime'
@@ -281,6 +285,7 @@ def readAllRefsInDB(dbConnection):
         tablename = type.capitalize()
         tempList = readAllRefsInTable(dbConnection, tablename)
         allRefItemList = allRefItemList + tempList
+    print(allRefItemList)
     return allRefItemList
 
 def readAllRefsInTable(dbConnection, tablename):
@@ -295,9 +300,13 @@ def readAllRefsInTable(dbConnection, tablename):
             if len(row) <= len(tempDBFieldsList):
                 refItem = {}
                 refItem['Type'] = tablename
+                if refItem['Type'] == 'Book':
+                    refItem['PubIn'] = ""
                 for i in range(len(row)):
                     tempFieldName = tempDBFieldsList[i].capitalize()
                     if tempFieldName == 'Journal':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Booktitle':
                         tempFieldName = 'PubIn'
                     elif tempFieldName == 'Addedtime':
                         tempFieldName = 'AddedTime'
@@ -310,7 +319,8 @@ def readAllRefsInTable(dbConnection, tablename):
                     elif tempFieldName == 'Author':
                         tempFieldName = 'Authors'
                     refItem[tempFieldName] = row[i]
-
+                    if row[i] is None:
+                        refItem[tempFieldName] = ""
                 refItemList.append(refItem)
     return refItemList
 
