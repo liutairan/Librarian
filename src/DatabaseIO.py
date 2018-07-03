@@ -265,6 +265,54 @@ def readRefsFromDBByIDs(dbConnection, refAbsIDList):
         refDictList.append(refItem)
     return refDictList
 
+def readAllRecentInDB(dbConnection, timeStr):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readRecentInTable(dbConnection, tablename, timeStr)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+
+def readRecentInTable(dbConnection, tablename, timeStr):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM " + tablename + " WHERE AddedTime>?", (timeStr,))
+    rows = cur.fetchall()
+    refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
+def DB2Dict(dbRows, tablename):
+    refItemList = []
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(dbRows):
+        for row in dbRows:
+            if len(row) <= len(tempDBFieldsList):
+                refItem = {}
+                refItem['Type'] = tablename
+                if refItem['Type'] == 'Book':
+                    refItem['PubIn'] = ""
+                for i in range(len(row)):
+                    tempFieldName = tempDBFieldsList[i].capitalize()
+                    if tempFieldName == 'Journal':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Booktitle':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Addedtime':
+                        tempFieldName = 'AddedTime'
+                    elif tempFieldName == 'Label':
+                        tempFieldName = 'Labels'
+                    elif tempFieldName == 'Id':
+                        tempFieldName = 'ID'
+                    elif tempFieldName == 'Refabsid':
+                        tempFieldName = 'RefAbsID'
+                    elif tempFieldName == 'Author':
+                        tempFieldName = 'Authors'
+                    refItem[tempFieldName] = row[i]
+                    if row[i] is None:
+                        refItem[tempFieldName] = ""
+                refItemList.append(refItem)
+    return refItemList
+
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
@@ -285,7 +333,6 @@ def readAllRefsInDB(dbConnection):
         tablename = type.capitalize()
         tempList = readAllRefsInTable(dbConnection, tablename)
         allRefItemList = allRefItemList + tempList
-    print(allRefItemList)
     return allRefItemList
 
 def readAllRefsInTable(dbConnection, tablename):
