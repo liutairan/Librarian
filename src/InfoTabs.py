@@ -53,6 +53,7 @@ class InfoTabs(QWidget):
         self.infoLabel = QLabel("A Lot of Infomation Here.")
         self.infoLabel.setStyleSheet("background-color: light grey; border: 2px inset grey; min-height: 100px; qproperty-alignment: AlignLeft AlignTop")
         self.infoLabel.setTextInteractionFlags(Qt.TextSelectableByMouse|Qt.TextSelectableByKeyboard|Qt.LinksAccessibleByMouse|Qt.LinksAccessibleByKeyboard)
+        self.infoLabel.setWordWrap(True)
         self.tab1.layout.addWidget(self.infoLabel)
         self.tab1.buttonLayout = QHBoxLayout()
         self.tab1.buttonLayout.addWidget(self.openFileButton)
