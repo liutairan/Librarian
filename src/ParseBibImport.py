@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 from datetime import datetime
 from ReferenceStructure import *
 
@@ -47,7 +48,7 @@ class BibTeXParser():
         bibType = bibItemList[0][ind1+1:ind2].replace(" ", "")
         citeKey = bibItemList[0][ind2+1:ind3]
         refItem = {}
-        refItem['Type'] = bibType.capitalize()
+        refItem['MType'] = bibType.capitalize()
         refItem['Citekey'] = citeKey
         for line in bibItemList[1:]:
             if "=" in line and "\n" in line:
@@ -60,26 +61,32 @@ class BibTeXParser():
                 elif "}\n" in line:
                     tempInd3 = line.index("}\n")
                 fieldValue = line[tempInd2+1:tempInd3]
-                fieldKey2 = fieldKey.capitalize()
-                if fieldKey2 == 'Title':
+                fieldKey2 = fieldKey #.capitalize()
+                if fieldKey2 == 'title':
                     fieldValue = fieldValue.replace("{","")
                     fieldValue = fieldValue.replace("}","")
-                if fieldKey2 == 'Author':
-                    fieldKey2 = 'Authors'
-                if fieldKey2 == 'Journal':
-                    fieldKey2 = 'PubIn'
-                if fieldKey2 == 'Booktitle' and refItem['Type'] == 'Inproceedings':
-                    fieldKey2 = 'PubIn'
+                # if fieldKey2 == 'Author':
+                #     fieldKey2 = 'Authors'
+                # if fieldKey2 == 'Journal':
+                #     fieldKey2 = 'PubIn'
+                # if fieldKey2 == 'Booktitle' and refItem['MType'] == 'Inproceedings':
+                #     fieldKey2 = 'PubIn'
                 refItem[fieldKey2] = fieldValue
-                if fieldKey2 == 'Year':
-                    refItem[fieldKey2] = int(fieldValue)
-            if 'PubIn' not in refItem:
-                refItem['PubIn'] = ""
-            if 'Labels' not in refItem:
-                refItem['Labels'] = ""
+                if fieldKey2 == 'year':
+                    refItem[fieldKey2] = fieldValue
+            # if 'PubIn' not in refItem:
+            #     refItem['PubIn'] = ""
+            if 'Label' not in refItem:
+                refItem['Label'] = ""
             currentTime = datetime.now()
             currentTimeStr = currentTime.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             refItem['AddedTime'] = currentTimeStr
+            tablename = refItem['MType']
+            refItem['RefAbsID'] = int(DB_TypeCode[tablename]*math.pow(10,8))
+            tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+            for field in tempDBFieldsList[2:]:
+                if field not in refItem:
+                    refItem[field] = ""
         return refItem
 
 
