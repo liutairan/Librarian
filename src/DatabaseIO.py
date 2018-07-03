@@ -287,7 +287,7 @@ def DB2Dict(dbRows, tablename):
         for row in dbRows:
             if len(row) <= len(tempDBFieldsList):
                 refItem = {}
-                refItem['Type'] = tablename
+                refItem['MType'] = tablename
                 refItem['PubIn'] = ""
                 # if refItem['Type'] == 'Book':
                 #     refItem['PubIn'] = ""
@@ -306,7 +306,7 @@ def DB2Dict(dbRows, tablename):
                     elif tempFieldName == 'Refabsid':
                         tempFieldName = 'RefAbsID'
                     elif tempFieldName == 'Author':
-                        tempFieldName = 'Authors'
+                        tempFieldName = 'Author'
                     refItem[tempFieldName] = row[i]
                     if row[i] is None:
                         refItem[tempFieldName] = ""

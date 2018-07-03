@@ -94,8 +94,8 @@ class RefTable(QWidget):
             self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd]['Year']))) # Year
             self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd]['Title'])) # Title
             self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd]['PubIn'])) # PubIn
-            self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd]['Authors'])) # Authors
-            self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd]['Type'])) # Type
+            self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd]['Author'])) # Authors
+            self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd]['MType'])) # Type
             self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd]['AddedTime'])) # Add Date, change to real field later
             self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd]['Labels'])) # Labels
             self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd]['RefAbsID']).zfill(10))) # RefAbsID
@@ -108,11 +108,11 @@ class RefTable(QWidget):
         self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(ref['Year']))) # Year
         self.mainTable.setItem(rowInd, 1, QTableWidgetItem(ref['Title'])) # Title
         self.mainTable.setItem(rowInd, 2, QTableWidgetItem(ref['PubIn'])) # PubIn
-        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref['Authors'])) # Authors
-        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref['Type'])) # Type
+        self.mainTable.setItem(rowInd, 3, QTableWidgetItem(ref['Author'])) # Authors
+        self.mainTable.setItem(rowInd, 4, QTableWidgetItem(ref['MType'])) # Type
         self.mainTable.setItem(rowInd, 5, QTableWidgetItem(ref['AddedTime'])) # Add Date, change to real field later
         self.mainTable.setItem(rowInd, 6, QTableWidgetItem(ref['Labels'])) # Labels
-        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref['ID']).zfill(10))) # RefAbsID
+        self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(ref['RefAbsID']).zfill(10))) # RefAbsID
         self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
