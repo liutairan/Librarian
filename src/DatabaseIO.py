@@ -29,7 +29,7 @@ def initTables(dbConnection):
         tablename = type.capitalize()
         sql_head = " CREATE TABLE IF NOT EXISTS " + "\"" + tablename + "\" ("
         DB_BaseStr = "`ID` INTEGER NOT NULL PRIMARY KEY UNIQUE," \
-                   + "`RefAbsID` INTEGER NOT NULL UNIQUE," \
+                   + "`RefAbsID` INTEGER NOT NULL," \
                    + "`Label` TEXT," \
                    + "`AddedTime` TEXT NOT NULL," \
                    + "`Citekey` TEXT,"
@@ -159,15 +159,18 @@ def readRefFromDBByDict(dbConnection, refItem1):
     :param refItem: reference dictionary
     :return:
     """
+    tablename = refItem1['MType']
+    sql = "SELECT * FROM " + tablename + " WHERE title=? AND author=? AND year=?"
     cur = dbConnection.cursor()
-    cur.execute("SELECT * FROM ReferencesData WHERE Title=? AND Authors=? AND Year=?",
-                (refItem1['Title'], refItem1['Authors'], refItem1['Year']))
+    cur.execute(sql, (refItem1['title'], refItem1['author'], refItem1['year']))
     rows = cur.fetchall()
     refItem2 = {}
-    if len(rows) == 1:
-        if len(rows[0]) <= len(DatabaseReferenceStructure):
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(rows) >= 1:
+        if len(rows[0]) <= len(tempDBFieldsList):
             for i in range(len(rows[0])):
-                refItem2[DatabaseReferenceStructure[i]] = rows[0][i]
+                refItem2[tempDBFieldsList[i]] = rows[0][i]
+    #print(refItem2)
     return refItem2
 
 # Checked
@@ -176,28 +179,43 @@ def writeRefToDB(dbConnection, refDict):
     tempItem = readRefFromDBByDict(dbConnection, refDict)
     if len(tempItem):
         tempItem1 = {}
-        tempItem1['Title'] = tempItem['Title']
-        tempItem1['Authors'] = tempItem['Authors']
-        tempItem1['Year'] = tempItem['Year']
+        tempItem1['title'] = tempItem['title']
+        tempItem1['author'] = tempItem['author']
+        tempItem1['year'] = tempItem['year']
         tempItem2 = {}
-        tempItem2['Title'] = refDict['Title']
-        tempItem2['Authors'] = refDict['Authors']
-        tempItem2['Year'] = refDict['Year']
+        tempItem2['title'] = refDict['title']
+        tempItem2['author'] = refDict['author']
+        tempItem2['year'] = refDict['year']
+        print("---")
+        print(tempItem1)
+        print(tempItem2)
         if tempItem1 == tempItem2:
-            pass
+            print("same")
         else:
             # Not exact the same, wait to check by users
-            sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-              VALUES(?,?,?,?,?,?,?) '''
-            task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+            tablename = refDict['MType']
+            tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+            sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"
+            #sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
+            #  VALUES(?,?,?,?,?,?,?) '''
+            task = ()
+            for field in tempDBFieldsList[1:]:
+                task = task + (refDict[field],)
+            # task = (refDict['Title'], refDict['Author'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
             cur = dbConnection.cursor()
             cur.execute(sql, task)
             dbConnection.commit()
     else:
         # Not exist, add to database
-        sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-          VALUES(?,?,?,?,?,?,?) '''
-        task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+        #sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
+        #  VALUES(?,?,?,?,?,?,?) '''
+        #task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+        tablename = refDict['MType']
+        tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+        sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"
+        task = ()
+        for field in tempDBFieldsList[1:]:
+            task = task + (refDict[field],)
         cur = dbConnection.cursor()
         cur.execute(sql, task)
         dbConnection.commit()
