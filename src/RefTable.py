@@ -116,7 +116,8 @@ class RefTable(QWidget):
         self.mainTable.setSortingEnabled(True)
 
     def updateRefsTable(self):
-        self.rowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
+        # self.rowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
+        self.rowNum = int(math.floor(countAllRefsInDB(self.conn)/100.0)*100+100)
         self.mainTable.setRowCount(self.rowNum)
         refItemList = []
         try:
@@ -179,10 +180,12 @@ class RefTable(QWidget):
         now = QDateTime.currentDateTime()
         previous = now.addMonths(-1)
         previousTimeKey = previous.toString("yyyy-MM-dd hh:mm:ss.zzz")
-        cur = self.conn.cursor()
-        cur.execute("SELECT * FROM ReferencesData WHERE AddedTime>?", (previousTimeKey,))
-        rows = cur.fetchall()
-        self.setRefsTable(self.refRowsToDictList(rows))
+        # cur = self.conn.cursor()
+        # cur.execute("SELECT * FROM ReferencesData WHERE AddedTime>?", (previousTimeKey,))
+        # rows = cur.fetchall()
+        refItemList = readAllRecentInDB(self.conn, previousTimeKey)
+        # self.setRefsTable(self.refRowsToDictList(rows))
+        self.setRefsTable(refItemList)
 
     def updateRefsTableForTrash(self):
         rows = []
