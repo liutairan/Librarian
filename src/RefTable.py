@@ -140,48 +140,23 @@ class RefTable(QWidget):
     def updateRefsTableByKey(self, showingMethod, keyword):
         rows = []
         if showingMethod == 0:
-            # cur = self.conn.cursor()
-            # cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword[0],))
-            # rows = cur.fetchall()
             refItemList = readAllRefsInDBByField(self.conn, ['PubIn'], keyword)
         elif showingMethod == 1:
-            # cur = self.conn.cursor()
-            # cur.execute("SELECT * FROM ReferencesData WHERE Labels=?", (keyword[0],))
-            # rows = cur.fetchall()
             refItemList = readAllRefsInDBByField(self.conn, ['Label'], keyword)
         elif showingMethod == 2:
-            # cur = self.conn.cursor()
-            # cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword[0],))
-            # rows = cur.fetchall()
             refItemList = readAllRefsInDBByField(self.conn, ['Year'], keyword)
         elif showingMethod == 3:
             if len(keyword) == 1:
-                # cur = self.conn.cursor()
-                # cur.execute("SELECT * FROM ReferencesData WHERE PubIn=?", (keyword[0],))
-                # rows = cur.fetchall()
                 refItemList = readAllRefsInDBByField(self.conn, ['PubIn'], keyword)
             elif len(keyword) == 2:
-                # cur = self.conn.cursor()
-                # cur.execute("SELECT * FROM ReferencesData WHERE PubIn=? AND Year=?", (keyword[0], keyword[1]))
-                # rows = cur.fetchall()
                 refItemList = readAllRefsInDBByField(self.conn, ['PubIn', 'Year'], keyword)
         elif showingMethod == 4:
             if len(keyword) == 1:
-                # cur = self.conn.cursor()
-                # cur.execute("SELECT * FROM ReferencesData WHERE Year=?", (keyword[0],))
-                # rows = cur.fetchall()
                 refItemList = readAllRefsInDBByField(self.conn, ['Year'], keyword)
             elif len(keyword) == 2:
-                # cur = self.conn.cursor()
-                # cur.execute("SELECT * FROM ReferencesData WHERE Year=? AND PubIn=?", (keyword[0], keyword[1]))
-                # rows = cur.fetchall()
                 refItemList = readAllRefsInDBByField(self.conn, ['Year', 'PubIn'], keyword)
         else:
-            # cur = self.conn.cursor()
-            # cur.execute("SELECT * FROM ReferencesData")
-            # rows = cur.fetchall()
             refItemList = readAllRefsInDB(self.conn)
-        # self.setRefsTable(self.refRowsToDictList(rows))
         self.setRefsTable(refItemList)
 
     def updateRefsTableForRecent(self):
