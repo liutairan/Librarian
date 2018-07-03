@@ -196,20 +196,14 @@ def writeRefToDB(dbConnection, refDict):
             tablename = refDict['MType']
             tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
             sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"
-            #sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-            #  VALUES(?,?,?,?,?,?,?) '''
             task = ()
             for field in tempDBFieldsList[1:]:
                 task = task + (refDict[field],)
-            # task = (refDict['Title'], refDict['Author'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
             cur = dbConnection.cursor()
             cur.execute(sql, task)
             dbConnection.commit()
     else:
         # Not exist, add to database
-        #sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-        #  VALUES(?,?,?,?,?,?,?) '''
-        #task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
         tablename = refDict['MType']
         tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
         sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"

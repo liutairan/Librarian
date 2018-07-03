@@ -65,17 +65,9 @@ class BibTeXParser():
                 if fieldKey2 == 'title':
                     fieldValue = fieldValue.replace("{","")
                     fieldValue = fieldValue.replace("}","")
-                # if fieldKey2 == 'Author':
-                #     fieldKey2 = 'Authors'
-                # if fieldKey2 == 'Journal':
-                #     fieldKey2 = 'PubIn'
-                # if fieldKey2 == 'Booktitle' and refItem['MType'] == 'Inproceedings':
-                #     fieldKey2 = 'PubIn'
                 refItem[fieldKey2] = fieldValue
                 if fieldKey2 == 'year':
                     refItem[fieldKey2] = fieldValue
-            # if 'PubIn' not in refItem:
-            #     refItem['PubIn'] = ""
             if 'Label' not in refItem:
                 refItem['Label'] = ""
             currentTime = datetime.now()
