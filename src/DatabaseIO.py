@@ -237,29 +237,6 @@ def readRefInDBTableByID(dbConnection, refType, refAbsID):
     tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[refType] + DB_ExtendFields
     row = rows[0]
     refItem = DB2Dict(rows, tablename)[0]
-    # if len(row) <= len(tempDBFieldsList):
-    #     refItem['Type'] = tablename
-    #     if refItem['Type'] == 'Book':
-    #         refItem['PubIn'] = ""
-    #     for i in range(len(row)):
-    #         tempFieldName = tempDBFieldsList[i].capitalize()
-    #         if tempFieldName == 'Journal':
-    #             tempFieldName = 'PubIn'
-    #         elif tempFieldName == 'Booktitle':
-    #             tempFieldName = 'PubIn'
-    #         elif tempFieldName == 'Addedtime':
-    #             tempFieldName = 'AddedTime'
-    #         elif tempFieldName == 'Label':
-    #             tempFieldName = 'Labels'
-    #         elif tempFieldName == 'Id':
-    #             tempFieldName = 'ID'
-    #         elif tempFieldName == 'Refabsid':
-    #             tempFieldName = 'RefAbsID'
-    #         elif tempFieldName == 'Author':
-    #             tempFieldName = 'Authors'
-    #         refItem[tempFieldName] = row[i]
-    #         if row[i] is None:
-    #             refItem[tempFieldName] = ""
     return refItem
 
 # Checked
@@ -405,33 +382,6 @@ def readAllRefsInTable(dbConnection, tablename):
     tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
     if len(rows):
         refItemList = DB2Dict(rows, tablename)
-        # for row in rows:
-        #     if len(row) <= len(tempDBFieldsList):
-        #         refItem = {}
-        #         refItem['Type'] = tablename
-        #         refItem['PubIn'] = ""
-        #         #if refItem['Type'] == 'Book':
-        #         #    refItem['PubIn'] = ""
-        #         for i in range(len(row)):
-        #             tempFieldName = tempDBFieldsList[i].capitalize()
-        #             if tempFieldName == 'Journal':
-        #                 tempFieldName = 'PubIn'
-        #             elif tempFieldName == 'Booktitle':
-        #                 tempFieldName = 'PubIn'
-        #             elif tempFieldName == 'Addedtime':
-        #                 tempFieldName = 'AddedTime'
-        #             elif tempFieldName == 'Label':
-        #                 tempFieldName = 'Labels'
-        #             elif tempFieldName == 'Id':
-        #                 tempFieldName = 'ID'
-        #             elif tempFieldName == 'Refabsid':
-        #                 tempFieldName = 'RefAbsID'
-        #             elif tempFieldName == 'Author':
-        #                 tempFieldName = 'Authors'
-        #             refItem[tempFieldName] = row[i]
-        #             if row[i] is None:
-        #                 refItem[tempFieldName] = ""
-        #         refItemList.append(refItem)
     return refItemList
 
 def updateRefToDBByID(dbConnection, refAbsID, value):
