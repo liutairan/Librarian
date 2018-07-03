@@ -499,4 +499,4 @@ def readTempCitationsFromDB(dbConnection):
 
 
 if __name__ == "__main__":
-    createDB("Test2.db")
+    createDB("Test.db")
