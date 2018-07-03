@@ -14,18 +14,37 @@ def createDB(db_path):
 
 def initTables(dbConnection):
     # Create Article table
-    sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
-                                        `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
-                                        `Title` TEXT NOT NULL,
-                                        `Author` TEXT,
-                                        `Type` TEXT NOT NULL,
-                                        `Journal` TEXT,
-                                        `Year` INTEGER NOT NULL,
-                                        `Labels` TEXT,
-                                        `AddedTime` TEXT NOT NULL
-                                    ); """
-    createTable(dbConnection, sql_create_article_table)
-    # Create Conference table
+    # sql_create_article_table = """ CREATE TABLE IF NOT EXISTS "Article" (
+    #                                     `ID` INTEGER NOT NULL PRIMARY KEY UNIQUE,
+    #                                     `Title` TEXT NOT NULL,
+    #                                     `Author` TEXT,
+    #                                     `Type` TEXT NOT NULL,
+    #                                     `Journal` TEXT,
+    #                                     `Year` INTEGER NOT NULL,
+    #                                     `Labels` TEXT,
+    #                                     `AddedTime` TEXT NOT NULL
+    #                                 ); """
+    # print(sql_create_article_table)
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        sql_head = " CREATE TABLE IF NOT EXISTS " + "\"" + tablename + "\" ("
+        DB_BaseStr = "`ID` INTEGER NOT NULL PRIMARY KEY UNIQUE," \
+                   + "`RefAbsID` INTEGER NOT NULL," \
+                   + "`Label` TEXT," \
+                   + "`AddedTime` TEXT NOT NULL," \
+                   + "`Citekey` TEXT,"
+        DB_FieldsStrList = []
+        DB_ExtendFieldsStrList = []
+        for field in DatabaseStandardStructure[tablename]:
+            tempStr = "`" + field + "` TEXT"
+            DB_FieldsStrList.append(tempStr)
+        for field in DB_ExtendFields:
+            tempStr = "`" + field + "` TEXT"
+            DB_ExtendFieldsStrList.append(tempStr)
+        DB_FieldsStr = ",".join(DB_FieldsStrList + DB_ExtendFieldsStrList)
+        sql_tail = "); "
+        sql_create_table_expr =  sql_head + DB_BaseStr + DB_FieldsStr + sql_tail
+        createTable(dbConnection, sql_create_table_expr)
 
     # Create Citation table
     sql_create_citation_table = """ CREATE TABLE IF NOT EXISTS "Citation" (
@@ -88,6 +107,23 @@ def createConnectionToDB(db_file):
         print(e)
         return None
 
+
+def countAllRefsInDB(dbConnection):
+    allRefNum = 0
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempNum = countRefsInTable(dbConnection, tablename)
+        allRefNum = allRefNum + tempNum
+    return allRefNum
+
+def countRefsInTable(dbConnection, tablename):
+    sql = "SELECT Count(*) FROM " + tablename
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    refNum = cur.fetchone()
+    return refNum[0]
+
+# Checked
 def countRefs(dbConnection):
     sql = "SELECT Count(*) FROM ReferencesData"
     cur = dbConnection.cursor()
@@ -123,15 +159,18 @@ def readRefFromDBByDict(dbConnection, refItem1):
     :param refItem: reference dictionary
     :return:
     """
+    tablename = refItem1['MType']
+    sql = "SELECT * FROM " + tablename + " WHERE title=? AND author=? AND year=?"
     cur = dbConnection.cursor()
-    cur.execute("SELECT * FROM ReferencesData WHERE Title=? AND Authors=? AND Year=?",
-                (refItem1['Title'], refItem1['Authors'], refItem1['Year']))
+    cur.execute(sql, (refItem1['title'], refItem1['author'], refItem1['year']))
     rows = cur.fetchall()
     refItem2 = {}
-    if len(rows) == 1:
-        if len(rows[0]) <= len(DatabaseReferenceStructure):
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(rows) >= 1:
+        if len(rows[0]) <= len(tempDBFieldsList):
             for i in range(len(rows[0])):
-                refItem2[DatabaseReferenceStructure[i]] = rows[0][i]
+                refItem2[tempDBFieldsList[i]] = rows[0][i]
+    #print(refItem2)
     return refItem2
 
 # Checked
@@ -140,28 +179,34 @@ def writeRefToDB(dbConnection, refDict):
     tempItem = readRefFromDBByDict(dbConnection, refDict)
     if len(tempItem):
         tempItem1 = {}
-        tempItem1['Title'] = tempItem['Title']
-        tempItem1['Authors'] = tempItem['Authors']
-        tempItem1['Year'] = tempItem['Year']
+        tempItem1['title'] = tempItem['title']
+        tempItem1['author'] = tempItem['author']
+        tempItem1['year'] = tempItem['year']
         tempItem2 = {}
-        tempItem2['Title'] = refDict['Title']
-        tempItem2['Authors'] = refDict['Authors']
-        tempItem2['Year'] = refDict['Year']
+        tempItem2['title'] = refDict['title']
+        tempItem2['author'] = refDict['author']
+        tempItem2['year'] = refDict['year']
         if tempItem1 == tempItem2:
             pass
         else:
             # Not exact the same, wait to check by users
-            sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-              VALUES(?,?,?,?,?,?,?) '''
-            task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+            tablename = refDict['MType']
+            tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+            sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"
+            task = ()
+            for field in tempDBFieldsList[1:]:
+                task = task + (refDict[field],)
             cur = dbConnection.cursor()
             cur.execute(sql, task)
             dbConnection.commit()
     else:
         # Not exist, add to database
-        sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels, AddedTime)
-          VALUES(?,?,?,?,?,?,?) '''
-        task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'], refDict['AddedTime'])
+        tablename = refDict['MType']
+        tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+        sql = "INSERT INTO " + tablename + "(" + ",".join(tempDBFieldsList[1:]) + ") VALUES(" + ",".join(["?"]*len(tempDBFieldsList[1:])) + ")"
+        task = ()
+        for field in tempDBFieldsList[1:]:
+            task = task + (refDict[field],)
         cur = dbConnection.cursor()
         cur.execute(sql, task)
         dbConnection.commit()
@@ -171,6 +216,49 @@ def writeRefsToDB(dbConnection, refDictList):
     if len(refDictList):
         for refDict in refDictList:
             writeRefToDB(dbConnection, refDict)
+            updateRefAbsID(dbConnection, refDict)
+
+def updateRefAbsID(dbConnection, refDict):
+    tempItem = readRefFromDBByDict(dbConnection, refDict)
+    tablename = refDict['MType']
+    sql = "UPDATE " + tablename + " SET  RefAbsID= ? WHERE id = ?"
+    refAbsID = int(str(DB_TypeCode[tablename])+str(tempItem['ID']).zfill(8))
+    task = (refAbsID, tempItem['ID'])
+    cur = dbConnection.cursor()
+    cur.execute(sql, task)
+    dbConnection.commit()
+
+def readRefInDBTableByID(dbConnection, refType, refAbsID):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM " + refType +" WHERE RefAbsID=?", (refAbsID,))
+    rows = cur.fetchall()
+    refItem = {}
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[refType] + DB_ExtendFields
+    row = rows[0]
+    if len(row) <= len(tempDBFieldsList):
+        refItem['Type'] = refType
+        if refItem['Type'] == 'Book':
+            refItem['PubIn'] = ""
+        for i in range(len(row)):
+            tempFieldName = tempDBFieldsList[i].capitalize()
+            if tempFieldName == 'Journal':
+                tempFieldName = 'PubIn'
+            elif tempFieldName == 'Booktitle':
+                tempFieldName = 'PubIn'
+            elif tempFieldName == 'Addedtime':
+                tempFieldName = 'AddedTime'
+            elif tempFieldName == 'Label':
+                tempFieldName = 'Labels'
+            elif tempFieldName == 'Id':
+                tempFieldName = 'ID'
+            elif tempFieldName == 'Refabsid':
+                tempFieldName = 'RefAbsID'
+            elif tempFieldName == 'Author':
+                tempFieldName = 'Authors'
+            refItem[tempFieldName] = row[i]
+            if row[i] is None:
+                refItem[tempFieldName] = ""
+    return refItem
 
 # Checked
 def readRefFromDBByID(dbConnection, refAbsID):
@@ -197,6 +285,92 @@ def readRefsFromDBByIDs(dbConnection, refAbsIDList):
         refDictList.append(refItem)
     return refDictList
 
+def readAllRecentInDB(dbConnection, timeStr):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readRecentInTable(dbConnection, tablename, timeStr)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+
+def readRecentInTable(dbConnection, tablename, timeStr):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM " + tablename + " WHERE AddedTime>?", (timeStr,))
+    rows = cur.fetchall()
+    refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
+def DB2Dict(dbRows, tablename):
+    refItemList = []
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(dbRows):
+        for row in dbRows:
+            if len(row) <= len(tempDBFieldsList):
+                refItem = {}
+                refItem['Type'] = tablename
+                if refItem['Type'] == 'Book':
+                    refItem['PubIn'] = ""
+                for i in range(len(row)):
+                    tempFieldName = tempDBFieldsList[i].capitalize()
+                    if tempFieldName == 'Journal':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Booktitle':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Addedtime':
+                        tempFieldName = 'AddedTime'
+                    elif tempFieldName == 'Label':
+                        tempFieldName = 'Labels'
+                    elif tempFieldName == 'Id':
+                        tempFieldName = 'ID'
+                    elif tempFieldName == 'Refabsid':
+                        tempFieldName = 'RefAbsID'
+                    elif tempFieldName == 'Author':
+                        tempFieldName = 'Authors'
+                    refItem[tempFieldName] = row[i]
+                    if row[i] is None:
+                        refItem[tempFieldName] = ""
+                refItemList.append(refItem)
+    return refItemList
+
+def readAllRefsInDBByField(dbConnection, fieldList, keywordList):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readAllRefsInTableByField(dbConnection, tablename, fieldList, keywordList)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+def readAllRefsInTableByField(dbConnection, tablename, fieldList, keywordList):
+    checkFlag = False
+    tempFieldList = list(fieldList)
+    if 'PubIn' not in fieldList:
+        checkFlag = True
+    else:
+        tempInd = tempFieldList.index('PubIn')
+        if tablename == 'Article':
+            tempFieldList[tempInd] = 'journal'
+            checkFlag = True
+        elif tablename == 'Conference':
+            tempFieldList[tempInd] = 'booktitle'
+            checkFlag = True
+
+    refItemList = []
+    if checkFlag:
+        sql = "SELECT * FROM " + tablename + " WHERE "
+        if len(fieldList) == 1:
+            sql = sql + tempFieldList[0] + "=?"
+            cur = dbConnection.cursor()
+            cur.execute(sql, (keywordList[0],))
+        elif len(fieldList) == 2:
+            sql = sql + tempFieldList[0] + "=? AND " + tempFieldList[1] + "=?"
+            cur = dbConnection.cursor()
+            cur.execute(sql, (keywordList[0],keywordList[1]))
+
+        rows = cur.fetchall()
+        refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
@@ -208,6 +382,50 @@ def readAllRefsFromDB(dbConnection):
                 refItem = {}
                 for i in range(len(row)):
                     refItem[DatabaseReferenceStructure[i]] = row[i]
+                refItemList.append(refItem)
+    return refItemList
+
+def readAllRefsInDB(dbConnection):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readAllRefsInTable(dbConnection, tablename)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+def readAllRefsInTable(dbConnection, tablename):
+    sql = "SELECT * FROM " + tablename
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    refItemList = []
+    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    if len(rows):
+        for row in rows:
+            if len(row) <= len(tempDBFieldsList):
+                refItem = {}
+                refItem['Type'] = tablename
+                if refItem['Type'] == 'Book':
+                    refItem['PubIn'] = ""
+                for i in range(len(row)):
+                    tempFieldName = tempDBFieldsList[i].capitalize()
+                    if tempFieldName == 'Journal':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Booktitle':
+                        tempFieldName = 'PubIn'
+                    elif tempFieldName == 'Addedtime':
+                        tempFieldName = 'AddedTime'
+                    elif tempFieldName == 'Label':
+                        tempFieldName = 'Labels'
+                    elif tempFieldName == 'Id':
+                        tempFieldName = 'ID'
+                    elif tempFieldName == 'Refabsid':
+                        tempFieldName = 'RefAbsID'
+                    elif tempFieldName == 'Author':
+                        tempFieldName = 'Authors'
+                    refItem[tempFieldName] = row[i]
+                    if row[i] is None:
+                        refItem[tempFieldName] = ""
                 refItemList.append(refItem)
     return refItemList
 
@@ -301,4 +519,4 @@ def readTempCitationsFromDB(dbConnection):
 
 
 if __name__ == "__main__":
-    createDB("Test2.db")
+    createDB("Test.db")

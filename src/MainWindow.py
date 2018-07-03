@@ -202,11 +202,13 @@ class App(QMainWindow):
     def initDBConnection(self):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refs = []
+        if not os.path.exists(database):
+            createDB(database)
         try:
             self.conn = createConnectionToDB(database)
+            self.refTableRowNum = int(math.floor(countAllRefsInDB(self.conn)/100.0)*100+100)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-        self.refTableRowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
 
     def resizeEvent(self,event):
         self.resized.emit()
@@ -248,7 +250,7 @@ class App(QMainWindow):
             if len(importFilePath):
                 bp = BibTeXParser(importFilePath)
                 writeRefsToDB(self.conn, bp.referenceDictList)
-                self.refTableRowNum = int(math.floor(countRefs(self.conn)/100.0)*100+100)
+                self.refTableRowNum = int(math.floor(countAllRefsInDB(self.conn)/100.0)*100+100)
                 self.reftable_widget.updateRefsTable()
         elif action == "Export":
             selectedRefIDList = self.acquireSelectedRefItems()
@@ -314,7 +316,8 @@ class App(QMainWindow):
             if self.refTableRowEmpty(currRow) is False:  # Not empty, show
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
                 refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
-                self.infotab_widget.updateInfo(refAbsoluteID)
+                refType = self.reftable_widget.mainTable.item(currRow, 4).text()
+                self.infotab_widget.updateInfo(refType, refAbsoluteID)
                 self.infotab_widget.show()
             elif self.refTableRowEmpty(currRow) is True: # Empty, hide
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
@@ -329,7 +332,8 @@ class App(QMainWindow):
             if self.refTableRowEmpty(currRow) is False:  # Not empty, show
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*7/15, winGeo.height()-self.toolbarheight)
                 refAbsoluteID = int(self.reftable_widget.mainTable.item(currRow, 7).text())
-                self.infotab_widget.updateInfo(refAbsoluteID)
+                refType = self.reftable_widget.mainTable.item(currRow, 4).text()
+                self.infotab_widget.updateInfo(refType, refAbsoluteID)
                 self.infotab_widget.show()
             elif self.refTableRowEmpty(currRow) is True: # Empty, hide
                 self.reftable_widget.setGeometry(winGeo.width()*1/5, self.toolbarheight, winGeo.width()*12/15, winGeo.height()-self.toolbarheight)
