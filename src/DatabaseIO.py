@@ -186,11 +186,8 @@ def writeRefToDB(dbConnection, refDict):
         tempItem2['title'] = refDict['title']
         tempItem2['author'] = refDict['author']
         tempItem2['year'] = refDict['year']
-        print("---")
-        print(tempItem1)
-        print(tempItem2)
         if tempItem1 == tempItem2:
-            print("same")
+            pass
         else:
             # Not exact the same, wait to check by users
             tablename = refDict['MType']
@@ -219,6 +216,17 @@ def writeRefsToDB(dbConnection, refDictList):
     if len(refDictList):
         for refDict in refDictList:
             writeRefToDB(dbConnection, refDict)
+            updateRefAbsID(dbConnection, refDict)
+
+def updateRefAbsID(dbConnection, refDict):
+    tempItem = readRefFromDBByDict(dbConnection, refDict)
+    tablename = refDict['MType']
+    sql = "UPDATE " + tablename + " SET  RefAbsID= ? WHERE id = ?"
+    refAbsID = int(str(DB_TypeCode[tablename])+str(tempItem['ID']).zfill(8))
+    task = (refAbsID, tempItem['ID'])
+    cur = dbConnection.cursor()
+    cur.execute(sql, task)
+    dbConnection.commit()
 
 def readRefInDBTableByID(dbConnection, refType, refAbsID):
     cur = dbConnection.cursor()
