@@ -93,17 +93,6 @@ class InfoTabs(QWidget):
             for field in tempDBFieldsList:
                 if field not in ['title', 'author', 'Label', 'AddedTime', 'RefAbsID', 'ID', 'MType', 'journal', 'booktitle']:
                     textStringList.append(field.capitalize() + ": " + refItem[field.capitalize()])
-            # textStringList = ["Title: "        + refItem['Title'],
-            #                   "Authors: "      + refItem['Authors'],
-            #                   "Type: "         + refItem['Type'],
-            #                   "Journal: "      + refItem['PubIn'],
-            #                   "Year: "         + str(refItem['Year']),
-            #                   "Volume: "       + " ",
-            #                   "Issue: "        + " ",
-            #                   "Pages: "        + " ",
-            #                   "Labels: "       + refItem['Labels'],
-            #                   "Added Time:"    + refItem['AddedTime'],
-            #                   "Reference ID: " + str(refItem['RefAbsID']).zfill(10)]
             textString = "\n\n".join(textStringList)
             self.infoText.setText(textString)
 
