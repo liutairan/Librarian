@@ -5,7 +5,7 @@ from random import *
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton,
     QListWidget, QListWidgetItem, QAbstractItemView, QWidget, QAction,
     QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout,
-    QHeaderView, QLabel, QTreeWidget, QTreeWidgetItem, QToolBar, QLineEdit,
+    QHeaderView, QLabel, QTreeWidget, QTreeWidgetItem, QToolBar, QLineEdit, QTextEdit,
     QCompleter, QSizePolicy, QComboBox, QMessageBox, QDialog, QDialogButtonBox)
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QStringListModel, QRect, QSize, Qt
@@ -50,11 +50,10 @@ class InfoTabs(QWidget):
         self.addLabelButton.clicked.connect(self.addLabel)
         self.editInfoButton = QPushButton("Edit")
 
-        self.infoLabel = QLabel("A Lot of Infomation Here.")
-        self.infoLabel.setStyleSheet("background-color: light grey; border: 2px inset grey; min-height: 100px; qproperty-alignment: AlignLeft AlignTop")
-        self.infoLabel.setTextInteractionFlags(Qt.TextSelectableByMouse|Qt.TextSelectableByKeyboard|Qt.LinksAccessibleByMouse|Qt.LinksAccessibleByKeyboard)
-        self.infoLabel.setWordWrap(True)
-        self.tab1.layout.addWidget(self.infoLabel)
+        self.infoText = QTextEdit("A Lot of Infomation Here.")
+        self.infoText.setTextInteractionFlags(Qt.TextSelectableByMouse|Qt.TextSelectableByKeyboard|Qt.LinksAccessibleByMouse|Qt.LinksAccessibleByKeyboard)
+        self.infoText.setLineWrapMode(QTextEdit.WidgetWidth)
+        self.tab1.layout.addWidget(self.infoText)
         self.tab1.buttonLayout = QHBoxLayout()
         self.tab1.buttonLayout.addWidget(self.openFileButton)
         self.tab1.buttonLayout.addWidget(self.downloadFileButton)
@@ -83,21 +82,30 @@ class InfoTabs(QWidget):
         self.refType = refType
         self.refAbsID = refAbsID
         refItem = readRefInDBTableByID(self.conn, refType, refAbsID)
-        # refItem = readRefFromDBByID(self.conn, refAbsID)
         if len(refItem):
+            tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[self.refType] + DB_ExtendFields
             textStringList = ["Title: "        + refItem['Title'],
-                              "Authors: "      + refItem['Authors'],
-                              "Type: "         + refItem['Type'],
-                              "Journal: "      + refItem['PubIn'],
-                              "Year: "         + str(refItem['Year']),
-                              "Volume: "       + " ",
-                              "Issue: "        + " ",
-                              "Pages: "        + " ",
+                              "Authors: "      + refItem['Author'],
+                              "Type: "         + refItem['MType'],
                               "Labels: "       + refItem['Labels'],
-                              "Added Time:"    + refItem['AddedTime'],
+                              "Added Time: "   + refItem['AddedTime'],
                               "Reference ID: " + str(refItem['RefAbsID']).zfill(10)]
+            for field in tempDBFieldsList:
+                if field not in ['title', 'author', 'Label', 'AddedTime', 'RefAbsID', 'ID', 'MType', 'journal', 'booktitle']:
+                    textStringList.append(field.capitalize() + ": " + refItem[field.capitalize()])
+            # textStringList = ["Title: "        + refItem['Title'],
+            #                   "Authors: "      + refItem['Authors'],
+            #                   "Type: "         + refItem['Type'],
+            #                   "Journal: "      + refItem['PubIn'],
+            #                   "Year: "         + str(refItem['Year']),
+            #                   "Volume: "       + " ",
+            #                   "Issue: "        + " ",
+            #                   "Pages: "        + " ",
+            #                   "Labels: "       + refItem['Labels'],
+            #                   "Added Time:"    + refItem['AddedTime'],
+            #                   "Reference ID: " + str(refItem['RefAbsID']).zfill(10)]
             textString = "\n\n".join(textStringList)
-            self.infoLabel.setText(textString)
+            self.infoText.setText(textString)
 
     def addLabel(self):
         addLabelDialog = AddLabelPopup()
