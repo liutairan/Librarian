@@ -313,6 +313,44 @@ def DB2Dict(dbRows, tablename):
                 refItemList.append(refItem)
     return refItemList
 
+def readAllRefsInDBByField(dbConnection, fieldList, keywordList):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readAllRefsInTableByField(dbConnection, tablename, fieldList, keywordList)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+def readAllRefsInTableByField(dbConnection, tablename, fieldList, keywordList):
+    checkFlag = False
+    tempFieldList = list(fieldList)
+    if 'PubIn' not in fieldList:
+        checkFlag = True
+    else:
+        tempInd = tempFieldList.index('PubIn')
+        if tablename == 'Article':
+            tempFieldList[tempInd] = 'journal'
+            checkFlag = True
+        elif tablename == 'Conference':
+            tempFieldList[tempInd] = 'booktitle'
+            checkFlag = True
+
+    refItemList = []
+    if checkFlag:
+        sql = "SELECT * FROM " + tablename + " WHERE "
+        if len(fieldList) == 1:
+            sql = sql + tempFieldList[0] + "=?"
+            cur = dbConnection.cursor()
+            cur.execute(sql, (keywordList[0],))
+        elif len(fieldList) == 2:
+            sql = sql + tempFieldList[0] + "=? AND " + tempFieldList[1] + "=?"
+            cur = dbConnection.cursor()
+            cur.execute(sql, (keywordList[0],keywordList[1]))
+
+        rows = cur.fetchall()
+        refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
