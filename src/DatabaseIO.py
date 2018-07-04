@@ -472,6 +472,81 @@ def readTempCitationsFromDB(dbConnection):
     rows = cur.fetchall()
     return rows
 
+def UpdateDatabase(dbConnection):
+    indexYearsInDB(dbConnection)
+    indexPubInDB(dbConnection)
+
+
+def indexYearsInDB(dbConnection):
+    allYearList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempYearList = indexYearsInTable(dbConnection, tablename)
+        allYearList = allYearList + tempYearList
+    allYearList = list(set(allYearList))
+    allYearList.sort()
+    updateYearsTable(dbConnection, allYearList)
+
+def updateYearsTable(dbConnection, yearList):
+    cur = dbConnection.cursor()
+    cur.execute("DELETE FROM Years")
+    for year in yearList:
+        sql = "INSERT INTO Years (Year) VALUES(?)"
+        cur = dbConnection.cursor()
+        cur.execute(sql, (year,))
+        dbConnection.commit()
+
+def indexYearsInTable(dbConnection, tablename):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT GROUP_CONCAT(Year, ',') FROM " + tablename)
+    tempValue = cur.fetchone()
+    yearList = []
+    if len(tempValue):
+        if tempValue[0] is None:
+            pass
+        else:
+            yearList = tempValue[0].split(',')
+    return yearList
+
+def indexPubInDB(dbConnection):
+    allPubInList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempPubInList = indexPubInTable(dbConnection, tablename)
+        allPubInList = allPubInList + tempPubInList
+    allPubInList = list(set(allPubInList))
+    allPubInList.sort()
+    updatePubInTable(dbConnection, allPubInList)
+
+def updatePubInTable(dbConnection, pubInList):
+    cur = dbConnection.cursor()
+    cur.execute("DELETE FROM PubIn")
+    for pubin in pubInList:
+        sql = "INSERT INTO PubIn (Name) VALUES(?)"
+        cur = dbConnection.cursor()
+        cur.execute(sql, (pubin,))
+        dbConnection.commit()
+
+def indexPubInTable(dbConnection, tablename):
+    fieldname = ""
+    if tablename == 'Article':
+        fieldname = 'journal'
+    elif tablename == 'Conference':
+        fieldname = 'booktitle'
+    elif tablename == 'Inproceedings':
+        fieldname = 'booktitle'
+    pubInList = []
+    if len(fieldname)>0:
+        sql = "SELECT GROUP_CONCAT(" + fieldname + ", ';') FROM " + tablename
+        cur = dbConnection.cursor()
+        cur.execute(sql)
+        tempValue = cur.fetchone()
+        if len(tempValue):
+            if tempValue[0] is None:
+                pass
+            else:
+                pubInList = tempValue[0].split(';')
+    return pubInList
 
 if __name__ == "__main__":
     createDB("Test.db")
