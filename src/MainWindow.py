@@ -102,6 +102,8 @@ class App(QMainWindow):
         referencesMenu = bar.addMenu("References")
         referencesMenu.addAction("Create References for *.bibtex")
         groupsMenu = bar.addMenu("Groups")
+
+        # Tool Menu
         toolsMenu = bar.addMenu("Tools")
         toolsMenu.addAction("Create Tree by Co-authorrship") # Co-author
         toolsMenu.addAction("Create Tree by Citation") # Citation
@@ -109,11 +111,20 @@ class App(QMainWindow):
         toolsMenu.addAction("Edit Labels")
         toolsMenu.addAction("Remove Duplicate")
         toolsMenu.addAction("Combine Groups")
-        toolsMenu.addAction("Update Database")
+        menu_UpdateDB = QAction("Update Database", self)
+        menu_UpdateDB.setShortcut("Ctrl+U")
+        toolsMenu.addAction(menu_UpdateDB)
+        toolsMenu.triggered[QAction].connect(self.menubarTrigger)
+
+        # History Menu
         historyMenu = bar.addMenu("History")
         historyMenu.addAction("Local Search History")
         historyMenu.addAction("Online Search History")
+
+        # Window Menu
         windowMenu = bar.addMenu("Window")
+
+        # Help Menu
         helpMenu = bar.addMenu("Help")
         helpMenu.addAction("Help")
         helpMenu.addAction("Check for Updates...")
@@ -259,6 +270,8 @@ class App(QMainWindow):
             if len(exportFilePath):
                 if len(selectedRefIDList):
                     bw = BibTeXWriter(exportFilePath, selectedRefDictList)
+        elif action == "Update Database":
+            UpdateDatabase(self.conn)
         else:
             print(q.text()+" is triggered")
 
