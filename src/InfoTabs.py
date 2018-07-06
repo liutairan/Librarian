@@ -82,6 +82,7 @@ class InfoTabs(QWidget):
         self.refType = refType
         self.refAbsID = refAbsID
         refItem = readRefInDBTableByID(self.conn, refType, refAbsID)
+        print(refItem)
         if len(refItem):
             tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[self.refType] + DB_ExtendFields
             textStringList = ["Title: "        + refItem['Title'],
@@ -91,6 +92,10 @@ class InfoTabs(QWidget):
                               "Added Time: "   + refItem['AddedTime'],
                               "Reference ID: " + str(refItem['RefAbsID']).zfill(10)]
             for field in tempDBFieldsList:
+                if field == 'journal':
+                    textStringList.append("Journal: " + refItem['PubIn'])
+                elif field == 'booktitle':
+                    textStringList.append("Inproceedings: " + refItem['PubIn'])
                 if field not in ['title', 'author', 'Label', 'AddedTime', 'RefAbsID', 'ID', 'MType', 'journal', 'booktitle']:
                     textStringList.append(field.capitalize() + ": " + refItem[field.capitalize()])
             textString = "\n\n".join(textStringList)
