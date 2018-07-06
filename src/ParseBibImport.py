@@ -65,6 +65,9 @@ class BibTeXParser():
                 if fieldKey2 == 'title':
                     fieldValue = fieldValue.replace("{","")
                     fieldValue = fieldValue.replace("}","")
+                if fieldKey2 == 'author':
+                    fieldValue = fieldValue.replace("{","")
+                    fieldValue = fieldValue.replace("}","")
                 refItem[fieldKey2] = fieldValue
                 if fieldKey2 == 'year':
                     refItem[fieldKey2] = fieldValue
