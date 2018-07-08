@@ -403,6 +403,16 @@ def updateRefFieldToDBByID(dbConnection, refAbsID, field, value):
     cur.execute(sql, task)
     dbConnection.commit()
 
+# New
+def updateRefLabelByID(dbConnection, tablename, refAbsID, value):
+    sql = ''' UPDATE ''' + tablename + '''
+              SET Label = ?
+              WHERE RefAbsID = ?'''
+    task = (value, refAbsID)
+    cur = dbConnection.cursor()
+    cur.execute(sql, task)
+    dbConnection.commit()
+
 # Checked
 def getLabelsFromDB(dbConnection):
     """
