@@ -105,6 +105,6 @@ class InfoTabs(QWidget):
         result = addLabelDialog.exec_()
         if result:
             value = addLabelDialog.getValue()
-            updateRefFieldToDBByID(self.conn, self.refAbsID, "Labels", ",".join(value))
-            self.updateInfo(self.refAbsID)
+            updateRefLabelByID(self.conn, self.refType, self.refAbsID, ",".join(value))
+            self.updateInfo(self.refType, self.refAbsID)
             self.updateRefsTableSignal.emit()

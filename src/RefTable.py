@@ -183,5 +183,6 @@ class RefTable(QWidget):
     def updateSingleRefByID(self):
         currRow = self.mainTable.currentRow()
         refAbsoluteID = int(self.mainTable.item(currRow, 7).text())
-        refItem = readRefFromDBByID(self.conn, refAbsoluteID)
+        refType = self.mainTable.item(currRow, 4).text()
+        refItem = readRefInDBTableByID(self.conn, refType, refAbsoluteID)
         self.setSingleRef(refItem, currRow)
