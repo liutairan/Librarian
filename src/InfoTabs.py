@@ -82,7 +82,6 @@ class InfoTabs(QWidget):
         self.refType = refType
         self.refAbsID = refAbsID
         refItem = readRefInDBTableByID(self.conn, refType, refAbsID)
-        print(refItem)
         if len(refItem):
             tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[self.refType] + DB_ExtendFields
             textStringList = ["Title: "        + refItem['Title'],
