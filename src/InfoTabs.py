@@ -101,10 +101,10 @@ class InfoTabs(QWidget):
             self.infoText.setText(textString)
 
     def addLabel(self):
-        addLabelDialog = AddLabelPopup()
+        addLabelDialog = AddLabelPopup(self.refType, self.refAbsID)
         result = addLabelDialog.exec_()
         if result:
             value = addLabelDialog.getValue()
-            updateRefLabelByID(self.conn, self.refType, self.refAbsID, ",".join(value))
+            updateRefLabelByID(self.conn, self.refType, self.refAbsID, ";".join(value))
             self.updateInfo(self.refType, self.refAbsID)
             self.updateRefsTableSignal.emit()

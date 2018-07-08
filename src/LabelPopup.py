@@ -15,9 +15,11 @@ from sqlite3 import Error
 from DatabaseIO import *
 
 class AddLabelPopup(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, tablename, refAbsID, parent=None):
         super(QWidget, self).__init__(parent)
         self.setWindowTitle("Add Labels")
+        self.refType = tablename
+        self.refAbsID = refAbsID
         self.initUI()
         self.returnVal = None
 
@@ -48,6 +50,9 @@ class AddLabelPopup(QDialog):
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
+        self.getCurrentLabelList()
+        self.updateLabels()
+
         listItems = labels
         self.entryHintList.addItems(listItems)
         self.entryHintList.itemDoubleClicked.connect(self.setEntryText)
@@ -62,8 +67,6 @@ class AddLabelPopup(QDialog):
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
         self.buttons.move(350,260)
-
-        #self.updateLabels()
 
     def centerWindow(self):
         frameGeo = self.frameGeometry()
@@ -103,27 +106,9 @@ class AddLabelPopup(QDialog):
         # return label value to InfoTabs
         return self.labelTextList
 
-    def createConnectionToDB(self, db_file):
-        """ create a database connection to the SQLite database
-            specified by the db_file
-        :param db_file: database file
-        :return: Connection object or None
-        """
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(e)
-
-        return None
-
-    def getLabelsData(self):
-        labelRows = self.readLabelsFromDB(self.conn)
-        labels = list(map(lambda x: x[1], labelRows))
-        return labels
-
-    def readLabelsFromDB(self, conn):
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM Labels")
-        rows = cur.fetchall()
-        return rows
+    def getCurrentLabelList(self):
+        refItem = readRefInDBTableByID(self.conn, self.refType, self.refAbsID)
+        if len(refItem['Labels']) > 0:
+            tempList = refItem['Labels'].split(';')
+            if len(tempList) > 0:
+                self.labelTextList = tempList
