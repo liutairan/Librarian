@@ -433,6 +433,16 @@ def readLabelsFromDB(dbConnection):
     rows = cur.fetchall()
     return rows
 
+def addLabelToLabelsTable(dbConnection, labelText):
+    tempLabelList = getLabelsFromDB(dbConnection)
+    if labelText not in tempLabelList:
+        sql = ''' INSERT INTO Labels(Name)
+                  VALUES(?) '''
+        task = (labelText,)
+        cur = dbConnection.cursor()
+        cur.execute(sql, task)
+        dbConnection.commit()
+
 # Checked
 def getCitationsFromDB(dbConnection, refAbsID):
     citationRows = readCitationsFromDB(dbConnection, refAbsID)

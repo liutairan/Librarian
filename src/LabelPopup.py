@@ -33,6 +33,7 @@ class AddLabelPopup(QDialog):
 
         self.labelTextList = []
         self.existLabel = []
+        self.dbLabelList = []
 
         self.entryLineEdit = QLineEdit(self)
         self.entryLineEdit.setGeometry(360,10,150,20)
@@ -46,15 +47,14 @@ class AddLabelPopup(QDialog):
         refs = []
         try:
             self.conn = createConnectionToDB(database)
-            labels = getLabelsFromDB(self.conn)
+            self.dbLabelList = getLabelsFromDB(self.conn)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
         self.getCurrentLabelList()
         self.updateLabels()
 
-        listItems = labels
-        self.entryHintList.addItems(listItems)
+        self.entryHintList.addItems(self.dbLabelList)
         self.entryHintList.itemDoubleClicked.connect(self.setEntryText)
 
         self.addLabelButton = QPushButton("Add Label", self)
@@ -84,6 +84,8 @@ class AddLabelPopup(QDialog):
             if newLabel not in self.labelTextList:
                 self.labelTextList.append(newLabel)
                 self.updateLabels()
+                if newLabel not in self.dbLabelList:
+                    self.addLabelToDB(newLabel)
             else:
                 buttonReply = QMessageBox.critical(self, 'Alert', "Label Already Exists", QMessageBox.Ok, QMessageBox.Ok)
         else:
@@ -112,3 +114,6 @@ class AddLabelPopup(QDialog):
             tempList = refItem['Labels'].split(';')
             if len(tempList) > 0:
                 self.labelTextList = tempList
+
+    def addLabelToDB(self, labelText):
+        addLabelToLabelsTable(self.conn, labelText)
