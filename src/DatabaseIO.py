@@ -351,6 +351,25 @@ def readAllRefsInTableByField(dbConnection, tablename, fieldList, keywordList):
         refItemList = DB2Dict(rows, tablename)
     return refItemList
 
+def readAllRefsInDBByLabelPartialMatch(dbConnection, keyword):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = readAllRefsInTableByLabelPartialMatch(dbConnection, tablename, keyword)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
+def readAllRefsInTableByLabelPartialMatch(dbConnection, tablename, keyword):
+    refItemList = []
+    sql = '''SELECT * FROM ''' + tablename + ''' WHERE Label LIKE "%''' + keyword + '''%"'''
+    cur = dbConnection.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    if len(rows) > 0:
+        refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
+
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
