@@ -142,7 +142,6 @@ class RefTable(QWidget):
         if showingMethod == 0:
             refItemList = readAllRefsInDBByField(self.conn, ['PubIn'], keyword)
         elif showingMethod == 1:
-            #refItemList = readAllRefsInDBByField(self.conn, ['Label'], keyword)
             refItemList = readAllRefsInDBByLabelPartialMatch(self.conn, keyword[0])
         elif showingMethod == 2:
             refItemList = readAllRefsInDBByField(self.conn, ['Year'], keyword)
