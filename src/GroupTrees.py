@@ -63,7 +63,7 @@ class GroupTrees(QWidget):
         # create a database connection
         groups = []
         try:
-            self.conn = self.createConnectionToDB(database)
+            self.conn = createConnectionToDB(database)
             groups = self.getGroupData()
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Database is missing", QMessageBox.Ok, QMessageBox.Ok)
@@ -86,18 +86,6 @@ class GroupTrees(QWidget):
         #print(i, self.methodCB.currentText())
         groups = self.getGroupData()
         self.setGroups(groups)
-
-        # Here is temp code for test, remove later.
-        # tempRef = {"Title": ''.join(choice(string.ascii_letters) for x in range(10)),
-        #            "Authors": ''.join(choice(string.ascii_letters) for x in range(5)),
-        #            "Type": "Journal",
-        #            "PubIn": "IEEE"+chr(randint(48,57)),
-        #            "Year": "201"+chr(randint(48,57)),
-        #            "Labels": ""}
-        # with self.conn:
-        #     self.addSingleReference(self.conn, tempRef)
-        # Update related database field and GUI widgets
-        # self.updateRefsTableSignal.emit()
 
     def getGroupData(self):
         # Read group names from DataBase
@@ -181,42 +169,3 @@ class GroupTrees(QWidget):
     def getSearchMethodData(self):
         # Read search methods from database
         pass
-
-    def createConnectionToDB(self, db_file):
-        """ create a database connection to the SQLite database
-            specified by the db_file
-        :param db_file: database file
-        :return: Connection object or None
-        """
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(e)
-
-        return None
-
-    def select_task_by_id(self, conn, id):
-        """
-        Query tasks by priority
-        :param conn: the Connection object
-        :param priority:
-        :return:
-        """
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM Groups WHERE id=?", (2,))
-
-        rows = cur.fetchall()
-
-        for row in rows:
-            print(row)
-
-    def addSingleReference(self, conn, refDict):
-        sql = ''' INSERT INTO ReferencesData(Title, Authors, Type, PubIn, Year, Labels)
-                  VALUES(?,?,?,?,?,?) '''
-        task = (refDict['Title'], refDict['Authors'], refDict['Type'], refDict['PubIn'], refDict['Year'], refDict['Labels'])
-        #print(refDict)
-        #print(task)
-        cur = conn.cursor()
-        cur.execute(sql, task)
-        return cur.lastrowid
