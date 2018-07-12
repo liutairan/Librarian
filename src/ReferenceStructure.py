@@ -53,7 +53,7 @@ ExtendedDatabaseReferenceStructure = ['ID', 'Title', 'Author', 'Type', 'PubIn',
                               'Series', 'Address', 'Organization', 'Doi', 'Keywords',
                               'Other1', 'Other2', 'Other3', 'Other4', 'Other5']
 
-DB_BaseFields = ['ID', 'RefAbsID', 'Label', 'AddedTime', 'Citekey']
+DB_BaseFields = ['ID', 'RefAbsID', 'Labels', 'AddedTime', 'Citekey', 'Flags', 'Attachments']
 
 DB_ArticleFields = ["author", "title", "journal", "year",
                     "volume", "number", "pages", "month", "note",
