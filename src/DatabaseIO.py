@@ -30,9 +30,11 @@ def initTables(dbConnection):
         sql_head = " CREATE TABLE IF NOT EXISTS " + "\"" + tablename + "\" ("
         DB_BaseStr = "`ID` INTEGER NOT NULL PRIMARY KEY UNIQUE," \
                    + "`RefAbsID` INTEGER NOT NULL," \
-                   + "`Label` TEXT," \
+                   + "`Labels` TEXT," \
                    + "`AddedTime` TEXT NOT NULL," \
-                   + "`Citekey` TEXT,"
+                   + "`Citekey` TEXT," \
+                   + "`Flags` TEXT," \
+                   + "`Attachments` TEXT,"
         DB_FieldsStrList = []
         DB_ExtendFieldsStrList = []
         for field in DatabaseStandardStructure[tablename]:
@@ -170,7 +172,7 @@ def readRefFromDBByDict(dbConnection, refItem1):
         if len(rows[0]) <= len(tempDBFieldsList):
             for i in range(len(rows[0])):
                 refItem2[tempDBFieldsList[i]] = rows[0][i]
-    #print(refItem2)
+
     return refItem2
 
 # Checked
@@ -289,24 +291,16 @@ def DB2Dict(dbRows, tablename):
                 refItem = {}
                 refItem['MType'] = tablename
                 refItem['PubIn'] = ""
-                # if refItem['Type'] == 'Book':
-                #     refItem['PubIn'] = ""
-                for i in range(len(row)):
+                baseLength = len(DB_BaseFields)
+                for i in range(baseLength):
+                    refItem[DB_BaseFields[i]] = row[i]
+
+                for i in range(baseLength, len(row)):
                     tempFieldName = tempDBFieldsList[i].capitalize()
                     if tempFieldName == 'Journal':
                         tempFieldName = 'PubIn'
                     elif tempFieldName == 'Booktitle':
                         tempFieldName = 'PubIn'
-                    elif tempFieldName == 'Addedtime':
-                        tempFieldName = 'AddedTime'
-                    elif tempFieldName == 'Label':
-                        tempFieldName = 'Labels'
-                    elif tempFieldName == 'Id':
-                        tempFieldName = 'ID'
-                    elif tempFieldName == 'Refabsid':
-                        tempFieldName = 'RefAbsID'
-                    elif tempFieldName == 'Author':
-                        tempFieldName = 'Author'
                     refItem[tempFieldName] = row[i]
                     if row[i] is None:
                         refItem[tempFieldName] = ""
@@ -361,7 +355,7 @@ def readAllRefsInDBByLabelPartialMatch(dbConnection, keyword):
 
 def readAllRefsInTableByLabelPartialMatch(dbConnection, tablename, keyword):
     refItemList = []
-    sql = '''SELECT * FROM ''' + tablename + ''' WHERE Label LIKE "%''' + keyword + '''%"'''
+    sql = '''SELECT * FROM ''' + tablename + ''' WHERE Labels LIKE "%''' + keyword + '''%"'''
     cur = dbConnection.cursor()
     cur.execute(sql)
     rows = cur.fetchall()
@@ -398,7 +392,7 @@ def readAllRefsInTable(dbConnection, tablename):
     cur.execute(sql)
     rows = cur.fetchall()
     refItemList = []
-    tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
+    # tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[tablename] + DB_ExtendFields
     if len(rows):
         refItemList = DB2Dict(rows, tablename)
     return refItemList
@@ -425,7 +419,7 @@ def updateRefFieldToDBByID(dbConnection, refAbsID, field, value):
 # New
 def updateRefLabelByID(dbConnection, tablename, refAbsID, value):
     sql = ''' UPDATE ''' + tablename + '''
-              SET Label = ?
+              SET Labels = ?
               WHERE RefAbsID = ?'''
     task = (value, refAbsID)
     cur = dbConnection.cursor()
