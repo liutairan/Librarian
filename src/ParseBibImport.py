@@ -68,9 +68,13 @@ class BibTeXParser():
                 if fieldKey2 == 'author':
                     fieldValue = fieldValue.replace("{","")
                     fieldValue = fieldValue.replace("}","")
+                if fieldKey2 == 'url':
+                    fieldKey2 = 'Links'
+                if fieldKey2 == 'file':
+                    fieldKey2 = 'Attachments'
                 refItem[fieldKey2] = fieldValue
-                if fieldKey2 == 'year':
-                    refItem[fieldKey2] = fieldValue
+                # if fieldKey2 == 'year':
+                #     refItem[fieldKey2] = fieldValue
             if 'Label' not in refItem:
                 refItem['Label'] = ""
             currentTime = datetime.now()
