@@ -125,6 +125,25 @@ class InfoTabs(QWidget):
             # Test code, remove later
             print("To be downloaded...")
         elif self.openordownloadFileButton.text() == "Open":
-            #filePath = ""
-            #os.system('open ' + filePath)
-            pass
+            retPath = self.processAttachmentsPath()
+            if len(retPath) > 0:
+                filePath = retPath
+            os.system('open ' + filePath)
+
+
+    def processAttachmentsPath(self):
+        tempStr0 = self.refItem['Attachments']
+        retPath = ""
+        if len(tempStr0) > 0:
+            tempStrList1 = tempStr0.split(";")
+            if len(tempStrList1) >= 1:
+                tempStr2 = tempStrList1[0]
+                if ":" in tempStr2:
+                    tempStrList2 = tempStr2.split(":")
+                    if len(tempStrList2) == 3:
+                        tempStr3 = "/" + tempStrList2[1]
+                        if os.path.exists(tempStr3):
+                            if "\\" not in tempStr3:
+                                tempStr4 = tempStr3.replace(" ", "\ ")
+                                retPath = tempStr4
+        return retPath
