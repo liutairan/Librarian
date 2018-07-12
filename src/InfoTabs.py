@@ -42,10 +42,14 @@ class InfoTabs(QWidget):
         self.tab1.layout.setSpacing(0)
         self.tab1.layout.setContentsMargins(0,0,0,0)
 
-        self.openFileButton = QPushButton("Open")
-        self.openFileButton.clicked.connect(self.parent().dododo)
+        # self.openFileButton = QPushButton("Open")
+        # self.openFileButton.clicked.connect(self.parent().dododo)
+        #
+        # self.downloadFileButton = QPushButton("Download")
 
-        self.downloadFileButton = QPushButton("Download")
+        self.openordownloadFileButton = QPushButton("Download")
+        self.openordownloadFileButton.clicked.connect(self.openordownloadFile)
+
         self.addLabelButton = QPushButton("Label")
         self.addLabelButton.clicked.connect(self.addLabel)
         self.editInfoButton = QPushButton("Edit")
@@ -55,8 +59,9 @@ class InfoTabs(QWidget):
         self.infoText.setLineWrapMode(QTextEdit.WidgetWidth)
         self.tab1.layout.addWidget(self.infoText)
         self.tab1.buttonLayout = QHBoxLayout()
-        self.tab1.buttonLayout.addWidget(self.openFileButton)
-        self.tab1.buttonLayout.addWidget(self.downloadFileButton)
+        # self.tab1.buttonLayout.addWidget(self.openFileButton)
+        # self.tab1.buttonLayout.addWidget(self.downloadFileButton)
+        self.tab1.buttonLayout.addWidget(self.openordownloadFileButton)
         self.tab1.buttonLayout.addWidget(self.addLabelButton)
         self.tab1.buttonLayout.addWidget(self.editInfoButton)
         self.tab1.layout.addLayout(self.tab1.buttonLayout)
@@ -69,6 +74,7 @@ class InfoTabs(QWidget):
         self.appearance = True
         self.refType = None
         self.refAbsID = None
+        self.refItem = None
 
     def initDBConnection(self):
         database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
@@ -82,6 +88,7 @@ class InfoTabs(QWidget):
         self.refType = refType
         self.refAbsID = refAbsID
         refItem = readRefInDBTableByID(self.conn, refType, refAbsID)
+        self.refItem = refItem
         if len(refItem):
             tempDBFieldsList = DB_BaseFields + DatabaseStandardStructure[self.refType] + DB_ExtendFields
             textStringList = ["Title: "        + refItem['Title'],
@@ -99,6 +106,10 @@ class InfoTabs(QWidget):
                     textStringList.append(field.capitalize() + ": " + refItem[field.capitalize()])
             textString = "\n\n".join(textStringList)
             self.infoText.setText(textString)
+            if len(refItem['Attachments']) > 0:
+                self.openordownloadFileButton.setText("Open")
+            else:
+                self.openordownloadFileButton.setText("Download")
 
     def addLabel(self):
         addLabelDialog = AddLabelPopup(self.refType, self.refAbsID)
@@ -108,3 +119,12 @@ class InfoTabs(QWidget):
             updateRefLabelByID(self.conn, self.refType, self.refAbsID, ";".join(value))
             self.updateInfo(self.refType, self.refAbsID)
             self.updateRefsTableSignal.emit()
+
+    def openordownloadFile(self):
+        if self.openordownloadFileButton.text() == "Download":
+            # Test code, remove later
+            print("To be downloaded...")
+        elif self.openordownloadFileButton.text() == "Open":
+            #filePath = ""
+            #os.system('open ' + filePath)
+            pass
