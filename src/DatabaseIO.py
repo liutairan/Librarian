@@ -34,7 +34,8 @@ def initTables(dbConnection):
                    + "`AddedTime` TEXT NOT NULL," \
                    + "`Citekey` TEXT," \
                    + "`Flags` TEXT," \
-                   + "`Attachments` TEXT,"
+                   + "`Attachments` TEXT," \
+                   + "`Links` TEXT,"
         DB_FieldsStrList = []
         DB_ExtendFieldsStrList = []
         for field in DatabaseStandardStructure[tablename]:
