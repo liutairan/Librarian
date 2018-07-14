@@ -106,7 +106,7 @@ class OnlineSearchPage(QWidget):
     def createSearchFilter(self, ind):
         self.labelList.insert(ind, QLabel('Key: '+ str(ind+1)))
         fieldCombo = QComboBox()
-        fieldChoiceList = ['Author', 'Year', 'Published In', 'Title', 'Keywords']
+        fieldChoiceList = ['Title', 'Year', 'Published In', 'Author', 'Keywords']
         fieldCombo.addItems(fieldChoiceList)
         if ind < 3:
             fieldCombo.setCurrentIndex(ind)
