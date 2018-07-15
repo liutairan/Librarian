@@ -217,8 +217,9 @@ class OnlineSearchPage(QWidget):
         self.mygroupbox.setLayout(self.myform)
 
     def onSearchButtonClicked(self):
+        searchTarget = []
         for i in range(len(self.inputboxList)):
             tempStr = self.inputboxList[i].text()
             if len(tempStr) > 0:
-                print(tempStr)
-                print(self.fieldComboList[i].currentText())
+                searchTarget.append([self.fieldComboList[i].currentText(), tempStr])
+        print(searchTarget)
