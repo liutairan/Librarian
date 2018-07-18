@@ -365,6 +365,25 @@ def readAllRefsInTableByLabelPartialMatch(dbConnection, tablename, keyword):
     return refItemList
 
 
+def searchRefInTable(dbConnection, tablename, searchTarget):
+    refItemList = []
+    sql = '''SELECT * FROM ''' + tablename + ''' WHERE Year=?'''
+    values = (searchTarget[0][1], )
+    cur = dbConnection.cursor()
+    cur.execute(sql, values)
+    rows = cur.fetchall()
+    if len(rows) > 0:
+        refItemList = DB2Dict(rows, tablename)
+    return refItemList
+
+def searchRefInDB(dbConnection, searchTarget):
+    allRefItemList = []
+    for type in BibTeXTypes:
+        tablename = type.capitalize()
+        tempList = searchRefInTable(dbConnection, tablename, searchTarget)
+        allRefItemList = allRefItemList + tempList
+    return allRefItemList
+
 def readAllRefsFromDB(dbConnection):
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM ReferencesData")
