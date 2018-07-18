@@ -22,7 +22,7 @@ from RelationGraphGenerator import RelationGraphGenerator
 from InteractiveGraphBrowser import InteractiveGraphBrowser
 from RefTable import RefTable
 from GroupTrees import GroupTrees
-from OnlineSearchPage import OnlineSearchPage
+from SearchPage import SearchPage
 
 from DatabaseIO import *
 from ParseBibImport import BibTeXParser
@@ -193,10 +193,10 @@ class App(QMainWindow):
         self.reftable_widget.setGeometry(self.width/5, self.toolbarheight, self.width*12/15, self.height)
 
         # Online Search Page
-        self.onlineSearch_widget = OnlineSearchPage(self)
-        self.onlineSearch_widget.setGeometry(self.width/5, self.toolbarheight, self.width*12/15, self.height)
-        self.onlineSearch_widget.hide()
-        self.onlineSearch_widget.appearance = False
+        self.search_widget = SearchPage(self)
+        self.search_widget.setGeometry(self.width/5, self.toolbarheight, self.width*12/15, self.height)
+        self.search_widget.hide()
+        self.search_widget.appearance = False
 
         self.show()
 
@@ -369,8 +369,8 @@ class App(QMainWindow):
         if getSelectedLocalLib:
             localLibNode = getSelectedLocalLib[0]
             localLibName = localLibNode.text(0)
-            self.onlineSearch_widget.hide()
-            self.onlineSearch_widget.appearance = False
+            self.search_widget.hide()
+            self.search_widget.appearance = False
             self.groupTree_widget.searchMethodTree.clearSelection()
             self.groupTree_widget.localGroupTree.clearSelection()
             self.reftable_widget.show()
@@ -391,28 +391,28 @@ class App(QMainWindow):
             self.reftable_widget.hide()
             self.reftable_widget.appearance = False
             self.infotab_widget.hide()
-            self.onlineSearch_widget.show()
-            self.onlineSearch_widget.appearance = True
+            self.search_widget.show()
+            self.search_widget.appearance = True
             # Clear selection of other groups
             self.groupTree_widget.localLibTree.clearSelection()
             self.groupTree_widget.localGroupTree.clearSelection()
-            #self.onlineSearch_widget.setGeometry(self.width/5, self.toolbarheight, self.width*7/15, self.height)
+            #self.search_widget.setGeometry(self.width/5, self.toolbarheight, self.width*7/15, self.height)
 
     def OpenLocalSearchPage(self):
         self.reftable_widget.hide()
         self.reftable_widget.appearance = False
         self.infotab_widget.hide()
-        self.onlineSearch_widget.show()
-        self.onlineSearch_widget.appearance = True
+        self.search_widget.show()
+        self.search_widget.appearance = True
         # Clear selection of other groups
         self.groupTree_widget.localGroupTree.clearSelection()
         self.groupTree_widget.searchMethodTree.clearSelection()
 
     def onLocalGroupChanged(self, item):
-        if (self.onlineSearch_widget.appearance == True):
+        if (self.search_widget.appearance == True):
             # Control the appearance of other pages
-            self.onlineSearch_widget.hide()
-            self.onlineSearch_widget.appearance = False
+            self.search_widget.hide()
+            self.search_widget.appearance = False
             self.reftable_widget.show()
             self.reftable_widget.appearance = True
         # Clear selection of other groups
@@ -431,10 +431,10 @@ class App(QMainWindow):
                 self.reftable_widget.updateRefsTableByKey(self.groupTree_widget.showingMethodInd, [primaryKey])
 
     def onShowingMethodChanged(self, i):
-        if (self.onlineSearch_widget.appearance == True):
+        if (self.search_widget.appearance == True):
             # Control the appearance of other pages
-            self.onlineSearch_widget.hide()
-            self.onlineSearch_widget.appearance = False
+            self.search_widget.hide()
+            self.search_widget.appearance = False
             self.reftable_widget.show()
             self.reftable_widget.appearance = True
         # Clear selection of other groups
