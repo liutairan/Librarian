@@ -21,12 +21,12 @@ class SearchPage(QWidget):
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
+        self.searchMode = 0
         self.initUI()
         self.initDBConnection()
 
     def initUI(self):
         layout = QVBoxLayout(self)
-
         functionLayout = QHBoxLayout()
         functionLayout.setAlignment(Qt.AlignLeft)
         functionLayout.setSpacing(2)

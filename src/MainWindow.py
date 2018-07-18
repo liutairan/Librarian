@@ -391,6 +391,13 @@ class App(QMainWindow):
             self.reftable_widget.hide()
             self.reftable_widget.appearance = False
             self.infotab_widget.hide()
+            # Set search mode
+            defaultSearchMethodList = ["Google Scholar", "PubMed", "IEEE Xplore", "Science Direct", "arXiv", "Sci-Hub", "More..."]
+            tempMode = defaultSearchMethodList.index(methodName)
+            if tempMode < len(defaultSearchMethodList)-2:
+                self.search_widget.searchMode = tempMode + 1
+            elif tempMode == len(defaultSearchMethodList)-1:
+                print("More...")
             self.search_widget.show()
             self.search_widget.appearance = True
             # Clear selection of other groups
@@ -402,6 +409,8 @@ class App(QMainWindow):
         self.reftable_widget.hide()
         self.reftable_widget.appearance = False
         self.infotab_widget.hide()
+        # Set to local search mode
+        self.search_widget.searchMode = 0
         self.search_widget.show()
         self.search_widget.appearance = True
         # Clear selection of other groups
