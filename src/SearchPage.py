@@ -223,3 +223,4 @@ class SearchPage(QWidget):
             if len(tempStr) > 0:
                 searchTarget.append([self.fieldComboList[i].currentText(), tempStr])
         print(searchTarget)
+        print(self.searchMode)
