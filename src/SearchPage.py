@@ -17,7 +17,7 @@ from sqlite3 import Error
 from DatabaseIO import *
 from LabelPopup import AddLabelPopup
 
-class OnlineSearchPage(QWidget):
+class SearchPage(QWidget):
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
