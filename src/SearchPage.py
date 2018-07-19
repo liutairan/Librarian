@@ -88,6 +88,12 @@ class SearchPage(QWidget):
         self.mainTable.setColumnWidth(6, 240) # Labels
         self.mainTable.setColumnWidth(7, 120) # RefAbsID
 
+        # Table settings
+        self.mainTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.mainTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.mainTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.mainTable.setSelectionBehavior(QAbstractItemView.SelectRows)
+
         # Connect sorting signal
         self.mainTable.setSortingEnabled(True)
         self.mainTable.horizontalHeader().sortIndicatorChanged.connect(self.sortingTable)
