@@ -24,7 +24,6 @@ class SearchPage(QWidget):
         self.searchMode = 0
         self.initDBConnection()
         self.initUI()
-        # self.initDBConnection()
 
     def initUI(self):
         layout = QVBoxLayout(self)
@@ -165,10 +164,8 @@ class SearchPage(QWidget):
     def sortingTable(self, colIndex, order):
         #print("Column:" + str(colIndex))
         if order == Qt.AscendingOrder:
-            #print("Ascending")
             pass
         elif order == Qt.DescendingOrder:
-            #print("Descending")
             pass
 
     def initDBConnection(self):
@@ -178,30 +175,6 @@ class SearchPage(QWidget):
             self.conn = createConnectionToDB(database)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-
-    # def updateInfo(self, refAbsID):
-    #     refItem = readRefFromDBByID(self.conn, refAbsID)
-    #     if len(refItem) >= 1:
-    #         textStringList = ["Title: "        + refItem['Title'],
-    #                           "Authors: "      + refItem['Authors'],
-    #                           "Type: "         + refItem['Type'],
-    #                           "Journal: "      + refItem['PubIn'],
-    #                           "Year: "         + str(refItem['Year']),
-    #                           "Volume: "       + " ",
-    #                           "Issue: "        + " ",
-    #                           "Pages: "        + " ",
-    #                           "Labels: "       + refItem['Labels'],
-    #                           "Added Date:"    + refItem['AddedTime'],
-    #                           "Reference ID: " + str(refItem['ID']).zfill(10)]
-    #         textString = "\n\n".join(textStringList)
-    #         self.label1.setText(textString)
-
-    # def addLabel(self):
-    #     addLabelDialog = AddLabelPopup()
-    #     result = addLabelDialog.exec_()
-    #     if result:
-    #         value = addLabelDialog.getValue()
-    #         print(value)
 
     def onPlusButtonClicked(self, buttonId):
         self.createSearchFilter(buttonId+1)
@@ -234,11 +207,14 @@ class SearchPage(QWidget):
             self.switchSearchMode(formattedSearchTarget)
 
     def parseSearchTarget(self, searchTarget):
+        # fieldChoiceList = ['Title', 'Year', 'Published In', 'Author', 'Keywords']
         formattedSearchTarget = []
         if len(searchTarget) > 0:
             for tarItem in searchTarget:
-                if tarItem[0] == 'Year':
-                    formattedSearchTarget.append(['Year', tarItem[1]])
+                if tarItem[0] == 'Published In':
+                    formattedSearchTarget.append(['PubIn', tarItem[1]])
+                else:
+                    formattedSearchTarget.append(tarItem)
         return formattedSearchTarget
 
     def switchSearchMode(self, searchTarget):
