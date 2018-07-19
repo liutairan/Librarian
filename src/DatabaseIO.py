@@ -367,13 +367,50 @@ def readAllRefsInTableByLabelPartialMatch(dbConnection, tablename, keyword):
 
 def searchRefInTable(dbConnection, tablename, searchTarget):
     refItemList = []
-    sql = '''SELECT * FROM ''' + tablename + ''' WHERE Year=?'''
-    values = (searchTarget[0][1], )
-    cur = dbConnection.cursor()
-    cur.execute(sql, values)
-    rows = cur.fetchall()
-    if len(rows) > 0:
-        refItemList = DB2Dict(rows, tablename)
+    # sql = '''SELECT * FROM ''' + tablename + ''' WHERE Year=?'''
+    # values = (searchTarget[0][1], )
+    sql_base = '''SELECT * FROM ''' + tablename + ''' WHERE '''
+    query_str = ""
+    pubinField = ""
+    for tarItem in searchTarget:
+        tarKey = tarItem[0]
+        tarValue = tarItem[1]
+        if tarKey == 'Year':
+            if len(query_str) == 0:
+                query_str = query_str + "Year=" + tarValue
+            else:
+                query_str = query_str + " AND Year=" + tarValue
+        elif tarKey == 'Title':
+            if len(query_str) == 0:
+                query_str = query_str + '''title LIKE "%''' + tarValue + '''%"'''
+            else:
+                query_str = query_str + ''' AND title LIKE "%''' + tarValue + '''%"'''
+        elif tarKey == 'Author':
+            if len(query_str) == 0:
+                query_str = query_str + '''author LIKE "%''' + tarValue + '''%"'''
+            else:
+                query_str = query_str + ''' AND author LIKE "%''' + tarValue + '''%"'''
+        elif tarKey == 'PubIn':
+            if tablename == 'Article':
+                pubinField = 'journal'
+            elif tablename == 'Inproceedings':
+                pubinField = 'booktitle'
+            else:
+                pass
+            if len(pubinField) > 0:
+                if len(query_str) == 0:
+                    query_str = query_str + pubinField + ''' LIKE "%''' + tarValue + '''%"'''
+                else:
+                    query_str = query_str + " AND " + pubinField + ''' LIKE "%''' + tarValue + '''%"'''
+    sql_str = sql_base + query_str
+    if len(pubinField)==0 and len(query_str) == 0:
+        pass
+    else:
+        cur = dbConnection.cursor()
+        cur.execute(sql_str)
+        rows = cur.fetchall()
+        if len(rows) > 0:
+            refItemList = DB2Dict(rows, tablename)
     return refItemList
 
 def searchRefInDB(dbConnection, searchTarget):
