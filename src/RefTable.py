@@ -20,6 +20,7 @@ class RefTable(QWidget):
     def __init__(self, parent, rowNum=100):
         super(QWidget, self).__init__(parent)
         self.rowNum = rowNum
+        self.initDBConnection()
         self.initUI()
 
     def initUI(self):
@@ -47,13 +48,14 @@ class RefTable(QWidget):
         self.mainTable.setColumnWidth(6, 240) # Labels
         self.mainTable.setColumnWidth(7, 120) # RefAbsID
         # Load refs from database
-        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
+        #database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
         refItemList = []
         try:
-            self.conn = createConnectionToDB(database)
+            #self.conn = createConnectionToDB(database)
             refItemList = self.getRefsData()
         except:
-            buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
+            pass
+            #buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Reference Table: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
         self.setRefsTable(refItemList)
         #self.reftable_widget.setGeometry(self.width/5, 0, self.width*7/15, self.height)
         #self.mainTable.itemClicked.connect(self.parent().reftableClicked)
@@ -79,6 +81,14 @@ class RefTable(QWidget):
         elif order == Qt.DescendingOrder:
             pass
             #print("Descending")
+
+    def initDBConnection(self):
+        database = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data.db")
+        refs = []
+        try:
+            self.conn = createConnectionToDB(database)
+        except:
+            buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
 
     def getRefsData(self):
         refItemList = readAllRefsInDB(self.conn)
