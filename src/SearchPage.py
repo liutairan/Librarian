@@ -21,12 +21,12 @@ class SearchPage(QWidget):
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self.initUI()
+        self.searchMode = 0
         self.initDBConnection()
+        self.initUI()
 
     def initUI(self):
         layout = QVBoxLayout(self)
-
         functionLayout = QHBoxLayout()
         functionLayout.setAlignment(Qt.AlignLeft)
         functionLayout.setSpacing(2)
@@ -86,6 +86,12 @@ class SearchPage(QWidget):
         self.mainTable.setColumnWidth(5, 120) # Added Date
         self.mainTable.setColumnWidth(6, 240) # Labels
         self.mainTable.setColumnWidth(7, 120) # RefAbsID
+
+        # Table settings
+        self.mainTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.mainTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.mainTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.mainTable.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Connect sorting signal
         self.mainTable.setSortingEnabled(True)
@@ -158,10 +164,8 @@ class SearchPage(QWidget):
     def sortingTable(self, colIndex, order):
         #print("Column:" + str(colIndex))
         if order == Qt.AscendingOrder:
-            #print("Ascending")
             pass
         elif order == Qt.DescendingOrder:
-            #print("Descending")
             pass
 
     def initDBConnection(self):
@@ -171,30 +175,6 @@ class SearchPage(QWidget):
             self.conn = createConnectionToDB(database)
         except:
             buttonReply = QMessageBox.critical(self, 'Alert', "Initialize Info Tab: Database is missing.", QMessageBox.Ok, QMessageBox.Ok)
-
-    def updateInfo(self, refAbsID):
-        refItem = readRefFromDBByID(self.conn, refAbsID)
-        if len(refItem) >= 1:
-            textStringList = ["Title: "        + refItem['Title'],
-                              "Authors: "      + refItem['Authors'],
-                              "Type: "         + refItem['Type'],
-                              "Journal: "      + refItem['PubIn'],
-                              "Year: "         + str(refItem['Year']),
-                              "Volume: "       + " ",
-                              "Issue: "        + " ",
-                              "Pages: "        + " ",
-                              "Labels: "       + refItem['Labels'],
-                              "Added Date:"    + refItem['AddedTime'],
-                              "Reference ID: " + str(refItem['ID']).zfill(10)]
-            textString = "\n\n".join(textStringList)
-            self.label1.setText(textString)
-
-    def addLabel(self):
-        addLabelDialog = AddLabelPopup()
-        result = addLabelDialog.exec_()
-        if result:
-            value = addLabelDialog.getValue()
-            print(value)
 
     def onPlusButtonClicked(self, buttonId):
         self.createSearchFilter(buttonId+1)
@@ -222,4 +202,55 @@ class SearchPage(QWidget):
             tempStr = self.inputboxList[i].text()
             if len(tempStr) > 0:
                 searchTarget.append([self.fieldComboList[i].currentText(), tempStr])
-        print(searchTarget)
+        if len(searchTarget) > 0:
+            formattedSearchTarget = self.parseSearchTarget(searchTarget)
+            self.switchSearchMode(formattedSearchTarget)
+
+    def parseSearchTarget(self, searchTarget):
+        # fieldChoiceList = ['Title', 'Year', 'Published In', 'Author', 'Keywords']
+        formattedSearchTarget = []
+        if len(searchTarget) > 0:
+            for tarItem in searchTarget:
+                if tarItem[0] == 'Published In':
+                    formattedSearchTarget.append(['PubIn', tarItem[1]])
+                else:
+                    formattedSearchTarget.append(tarItem)
+        return formattedSearchTarget
+
+    def switchSearchMode(self, searchTarget):
+        # Local search, online search, mix search
+        if self.searchMode == 0:
+            self.databaseSearch(searchTarget)
+        elif self.searchMode == 1:
+            pass
+        else:
+            pass
+
+    def databaseSearch(self, searchTarget):
+        foundRefItems = searchRefInDB(self.conn, searchTarget)
+        self.setRefsTable(foundRefItems)
+
+    # Temp function
+    def onlineSearch(self, searchTarget):
+        pass
+
+    def mixSearch(self, searchTarget):
+        pass
+
+    def setRefsTable(self, refs):
+        # Clean old contents
+        self.mainTable.clearContents()
+        # Must disable sorting table first, otherwise error will occur
+        self.mainTable.setSortingEnabled(False)
+        for rowInd in range(len(refs)):
+            self.mainTable.setItem(rowInd, 0, QTableWidgetItem(str(refs[rowInd]['Year']))) # Year
+            self.mainTable.setItem(rowInd, 1, QTableWidgetItem(refs[rowInd]['Title'])) # Title
+            self.mainTable.setItem(rowInd, 2, QTableWidgetItem(refs[rowInd]['PubIn'])) # PubIn
+            self.mainTable.setItem(rowInd, 3, QTableWidgetItem(refs[rowInd]['Author'])) # Authors
+            self.mainTable.setItem(rowInd, 4, QTableWidgetItem(refs[rowInd]['MType'])) # Type
+            self.mainTable.setItem(rowInd, 5, QTableWidgetItem(refs[rowInd]['AddedTime'])) # Add Date, change to real field later
+            self.mainTable.setItem(rowInd, 6, QTableWidgetItem(refs[rowInd]['Labels'])) # Labels
+            self.mainTable.setItem(rowInd, 7, QTableWidgetItem(str(refs[rowInd]['RefAbsID']).zfill(10))) # RefAbsID
+
+        # Enable sorting again.
+        self.mainTable.setSortingEnabled(True)
