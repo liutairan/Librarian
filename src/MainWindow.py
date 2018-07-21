@@ -18,6 +18,7 @@ from ReferenceStructure import *
 from InfoTabs import InfoTabs
 from AboutPopup import AboutPopup
 from SettingsPopup import SettingsPopup
+from OnlineSearchSettingPopup import OnlineSearchSettingPopup
 from RelationGraphGenerator import RelationGraphGenerator
 from InteractiveGraphBrowser import InteractiveGraphBrowser
 from RefTable import RefTable
@@ -392,14 +393,15 @@ class App(QMainWindow):
             self.reftable_widget.appearance = False
             self.infotab_widget.hide()
             # Set search mode
-            defaultSearchMethodList = ["Google Scholar", "PubMed", "IEEE Xplore", "Science Direct", "arXiv", "Sci-Hub", "More..."]
+            defaultSearchMethodList = ["Mixed Search", "Google Scholar", "PubMed", "IEEE Xplore", "Science Direct", "arXiv", "Sci-Hub", "More..."]
             tempMode = defaultSearchMethodList.index(methodName)
             if tempMode <= len(defaultSearchMethodList)-2:
                 self.search_widget.searchMode = tempMode + 1
             elif tempMode == len(defaultSearchMethodList)-1:
                 self.search_widget.searchMode = 0
-                # To do: add class to deal with online library choices
-                pass
+                self.onlineSearchMethods = OnlineSearchSettingPopup()
+                self.onlineSearchMethods.show()
+
             self.search_widget.show()
             self.search_widget.appearance = True
             # Clear selection of other groups
