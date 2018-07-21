@@ -222,20 +222,19 @@ class SearchPage(QWidget):
         if self.searchMode == 0:
             self.databaseSearch(searchTarget)
         elif self.searchMode == 1:
-            pass
+            self.mixSearch(searchTarget)
         else:
-            pass
+            self.onlineSearch(searchTarget)
 
     def databaseSearch(self, searchTarget):
         foundRefItems = searchRefInDB(self.conn, searchTarget)
         self.setRefsTable(foundRefItems)
 
-    # Temp function
     def onlineSearch(self, searchTarget):
-        pass
+        print("Get into online")
 
     def mixSearch(self, searchTarget):
-        pass
+        print("Get into mix")
 
     def setRefsTable(self, refs):
         # Clean old contents
