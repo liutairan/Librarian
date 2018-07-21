@@ -73,16 +73,9 @@ class GroupTrees(QWidget):
         self.searchMethodTree = QTreeWidget()
         self.searchMethodTree.setHeaderLabels(["Online Search"])
         searchMethod = []
-        defaultSearchMethodList = ["Google Scholar", "PubMed", "IEEE Xplore", "Science Direct", "arXiv", "Sci-Hub", "More..."]
+        defaultSearchMethodList = ["Mixed Search", "Google Scholar", "PubMed", "IEEE Xplore", "Science Direct", "arXiv", "Sci-Hub", "More..."]
         for i in range(len(defaultSearchMethodList)):
             searchMethod.append( QTreeWidgetItem(self.searchMethodTree, [defaultSearchMethodList[i]]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["Google Scholar"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["PubMed"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["IEEE Xplore"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["Science Direct"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["arXiv"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["Sci-Hub"]) )
-        # searchMethod.append( QTreeWidgetItem(self.searchMethodTree, ["More..."]) )
 
     def showingMethodChange(self, i):
         self.showingMethodInd = i
