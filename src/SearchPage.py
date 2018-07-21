@@ -232,6 +232,12 @@ class SearchPage(QWidget):
 
     def onlineSearch(self, searchTarget):
         print("Get into online")
+        if self.searchMode == 2:
+            pass
+        elif self.searchMode == 3:
+            pass
+        elif self.searchMode == 4:
+            pass
 
     def mixSearch(self, searchTarget):
         print("Get into mix")
