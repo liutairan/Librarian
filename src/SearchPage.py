@@ -227,20 +227,41 @@ class SearchPage(QWidget):
             self.onlineSearch(searchTarget)
 
     def databaseSearch(self, searchTarget):
+        foundRefItems = []
         foundRefItems = searchRefInDB(self.conn, searchTarget)
         self.setRefsTable(foundRefItems)
 
     def onlineSearch(self, searchTarget):
-        print("Get into online")
+        ''' 0: Local Database
+            1: "Mixed Search",
+            2: "Google Scholar",
+            3: "PubMed",
+            4: "IEEE Xplore",
+            5: "Science Direct",
+            6: "arXiv",
+            7: "Sci-Hub",
+            8: "More..."
+        '''
+        foundRefItems = []
         if self.searchMode == 2:
             pass
         elif self.searchMode == 3:
             pass
         elif self.searchMode == 4:
             pass
+        elif self.searchMode == 5:
+            pass
+        elif self.searchMode == 6:
+            pass
+        elif self.searchMode == 7:
+            pass
+        else:
+            pass
+        self.setRefsTable(foundRefItems)
 
     def mixSearch(self, searchTarget):
-        print("Get into mix")
+        foundRefItems = []
+        self.setRefsTable(foundRefItems)
 
     def setRefsTable(self, refs):
         # Clean old contents
