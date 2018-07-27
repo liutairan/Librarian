@@ -17,6 +17,8 @@ from sqlite3 import Error
 from DatabaseIO import *
 from LabelPopup import AddLabelPopup
 
+from ElsevierScopusSearch import ElsevierScopusSearch
+
 class SearchPage(QWidget):
 
     def __init__(self, parent):
