@@ -37,3 +37,10 @@ class OnlineSearchSettingPopup(QWidget):
         centerPoint = QApplication.desktop().screenGeometry(screen).center()
         frameGeo.moveCenter(centerPoint)
         self.move(frameGeo.topLeft())
+
+
+if __name__=="__main__":
+    app = QApplication(sys.argv)
+    screen = OnlineSearchSettingPopup()
+    screen.show()
+    sys.exit(app.exec_())
