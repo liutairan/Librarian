@@ -24,11 +24,18 @@ class OnlineSearchSettingPopup(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.left = 100
-        self.top = 100
-        self.width = 600
-        self.height = 360
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        # self.left = 100
+        # self.top = 100
+        # self.width = 600
+        # self.height = 360
+        # self.setGeometry(self.left, self.top, self.width, self.height)
+
+        layout = QVBoxLayout(self)
+        self.checkboxList = []
+        self.checkboxList.append(QCheckBox())
+        layout.addWidget(self.checkboxList[0])
+        self.setLayout(layout)
+
         self.centerWindow()
 
     def centerWindow(self):
