@@ -145,5 +145,7 @@ class InfoTabs(QWidget):
                         if os.path.exists(tempStr3):
                             if "\\" not in tempStr3:
                                 tempStr4 = tempStr3.replace(" ", "\ ")
-                                retPath = tempStr4
+                                tempStr5 = tempStr4.replace("(", "\(")
+                                tempStr6 = tempStr5.replace(")", "\)")
+                                retPath = tempStr6
         return retPath
